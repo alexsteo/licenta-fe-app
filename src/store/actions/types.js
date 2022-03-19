@@ -1,0 +1,10 @@
+export const SET_CURRENT_WEATHER = "SET_CURRENT_WEATHER";
+export const SET_DIRECTIONS = "SET_DIRECTIONS";
+export const SET_SEARCHED_FOR = "SET_SEARCHED_FOR";
+export const CLEAR_SELECTION = "CLEAR_SELECTION";
+export const SET_SEARCH_TYPE = "SET_SEARCH_TYPE";
+export const SHOW_MODAL = "SHOW_MODAL";
+export const HIDE_MODAL = "HIDE_MODAL";
+export const ADD_REPORT = "ADD_REPORT";
+export const SET_REPORTS = "SET_REPORTS";
+export const SET_MODAL_SCREEN = "SET_MODAL_SCREEN";
