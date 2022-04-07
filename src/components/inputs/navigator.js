@@ -40,11 +40,11 @@ export const Navigator = (props) => {
                 />
                 <Item
                     size={30}
-                    name="compass"
-                    text="Radar"
+                    name="star"
+                    text="Favourites"
                     type="Feather"
-                    isActive={screen === "radar"}
-                    onPress={() => onMenuItemPress("radar")}
+                    isActive={screen === "favourites"}
+                    onPress={() => onMenuItemPress("favourites")}
                 />
             </BottomMenu>
         </View>

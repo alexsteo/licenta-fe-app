@@ -1,5 +1,12 @@
 import GetLocation from "react-native-get-location";
-import {addReport, setCurrentWeather, setDirections, setReports, setSearchedFor} from "../../store/actions/actions";
+import {
+    addReport,
+    setCurrentWeather,
+    setDirections,
+    setFavourites,
+    setReports,
+    setSearchedFor
+} from "../../store/actions/actions";
 
 export const getDirections = (searchTerm, dispatch) => {
     GetLocation.getCurrentPosition({
@@ -7,7 +14,8 @@ export const getDirections = (searchTerm, dispatch) => {
         timeout: 15000,
     })
         .then(loc => {
-            let url = `http://10.0.2.2:8080/route/${loc.latitude},${loc.longitude}/${searchTerm}`
+            // let url = `http://10.0.2.2:8080/route/${loc.latitude},${loc.longitude}/${searchTerm.lat},${searchTerm.lng}`
+            let url = `http://10.0.2.2:8080/route/oradea/iasi`
             fetch(url)
                 .then(res => res.json())
                 .then(data => {
@@ -22,7 +30,8 @@ export const getDirections = (searchTerm, dispatch) => {
 }
 
 export const searchWeatherAtLocation = (searchTerm, dispatch) => {
-    let url = `http://10.0.2.2:8080/weather/${searchTerm}`;
+    let url = `http://10.0.2.2:8080/weather/${searchTerm.lat}/${searchTerm.lng}`;
+    console.log(url)
     fetch(url)
         .then(res => res.json())
         .then(data => {
@@ -37,6 +46,15 @@ export const getUserReports = (dispatch) => {
         .then(res => res.json())
         .then(data => {
             dispatch(setReports(data));
+        });
+}
+
+export const getFavouritesForUser = (dispatch, user) => {
+    let url = `http://10.0.2.2:8080/favourites/weather/${user}`;
+    fetch(url)
+        .then(res => res.json())
+        .then(data => {
+            dispatch(setFavourites(data.entries));
         });
 }
 

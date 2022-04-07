@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import MapView, {Marker, Polyline, PROVIDER_GOOGLE} from "react-native-maps";
 import {Dimensions, StyleSheet, Text, View} from "react-native";
 import {useSelector} from "react-redux";
@@ -9,12 +9,33 @@ export const Map = () => {
     const currentWeather = useSelector(state => state.nav.currentWeather);
     const searchType = useSelector(state => state.screen.searchType);
     const reports = useSelector(state => state.nav.reports);
+    const favourites = useSelector(state => state.nav.favourites);
+    let idx = 0;
+
+    const getColor = () => {
+        switch (idx) {
+            case 0:
+                idx = idx + 1;
+                idx = idx % 3;
+                return '#f00'
+            case 1:
+                idx = idx + 1;
+                idx = idx % 3;
+                return '#0f0'
+            case 2:
+                idx = idx + 1;
+                idx = idx % 3;
+                return '#00f'
+            default:
+                return '#f00'
+        }
+    }
 
     const addRoutes = (directions) => {
         return !!directions.routes && searchType === 'navigation' ? directions.routes.map(route => {
             return !!route ? <Polyline
                 coordinates={route}
-                strokeColor="#0f0"
+                strokeColor={getColor()}
                 strokeWidth={6}
             /> : null;
         }) : null
@@ -34,15 +55,33 @@ export const Map = () => {
     }
 
     const addReports = (reports) => {
-        return searchType === 'navigation' ? (
-                reports.map(report => (
+        return null;
+        // return searchType === 'navigation' ? (
+        //         reports.map(report => (
+        //                 <Marker key={Math.random()} coordinate={{
+        //                     latitude: parseFloat(report.lat),
+        //                     longitude: parseFloat(report.lng)
+        //                 }}>
+        //                     <View style={{backgroundColor: getReportColor(report.type), padding: 10}}>
+        //                         <Text>{report.type}</Text>
+        //                     </View>
+        //                 </Marker>
+        //             )
+        //         )
+        //     ) :
+        //     null;
+    }
+
+    const addFavourites = (favourites) => {
+        return searchType === 'favourites' ? (
+                favourites.map(fav => (
                         <Marker key={Math.random()} coordinate={{
-                            latitude: parseFloat(report.lat),
-                            longitude: parseFloat(report.lng)
+                            latitude: parseFloat(fav.lat),
+                            longitude: parseFloat(fav.lng)
 
                         }}>
-                            <View style={{backgroundColor: getReportColor(report.type), padding: 10}}>
-                                <Text>{report.type}</Text>
+                            <View style={{backgroundColor: "gold", padding: 10}}>
+                                <Text>{fav.name + "    " + (fav.temperature - 273.15).toFixed(2)}</Text>
                             </View>
                         </Marker>
                     )
@@ -82,6 +121,7 @@ export const Map = () => {
                 {addRoutes(directions)}
                 {addWeatherData(currentWeather)}
                 {addReports(reports)}
+                {addFavourites(favourites)}
             </MapView>
         </View>
     }

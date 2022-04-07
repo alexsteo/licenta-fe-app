@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react';
 import {View} from "react-native";
 import {MapScreen} from "./MapScreen";
-import {getUserReports} from "../common/apiMethods";
+import {getFavouritesForUser, getUserReports} from "../common/apiMethods";
 import {useDispatch} from "react-redux";
 
 export const MainScreen = () => {
@@ -10,6 +10,7 @@ export const MainScreen = () => {
 
     useEffect(() => {
         getUserReports(dispatch);
+        getFavouritesForUser(dispatch, 'boss')
     }, [])
 
     return (

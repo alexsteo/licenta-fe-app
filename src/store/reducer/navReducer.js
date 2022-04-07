@@ -1,5 +1,12 @@
 import {combineReducers} from "redux";
-import {ADD_REPORT, SET_CURRENT_WEATHER, SET_DIRECTIONS, SET_REPORTS, SET_SEARCHED_FOR} from "../actions/types";
+import {
+    ADD_REPORT,
+    SET_CURRENT_WEATHER,
+    SET_DIRECTIONS,
+    SET_FAVOUIRITES,
+    SET_REPORTS,
+    SET_SEARCHED_FOR
+} from "../actions/types";
 import {screenReducer} from "./screenReducer";
 
 const INITIAL_STATE = {
@@ -7,6 +14,7 @@ const INITIAL_STATE = {
     currentWeather: {},
     reports: [],
     searchedFor: "",
+    favourites: []
 };
 
 const navReducer = (state = INITIAL_STATE, action) => {
@@ -35,6 +43,11 @@ const navReducer = (state = INITIAL_STATE, action) => {
             return {
                 ...state,
                 reports: action.payload
+            }
+        case SET_FAVOUIRITES:
+            return {
+                ...state,
+                favourites: action.payload
             }
         default:
             return state

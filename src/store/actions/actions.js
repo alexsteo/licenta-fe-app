@@ -2,7 +2,7 @@ import {
     ADD_REPORT,
     CLEAR_SELECTION, HIDE_MODAL,
     SET_CURRENT_WEATHER,
-    SET_DIRECTIONS, SET_MODAL_SCREEN, SET_REPORTS,
+    SET_DIRECTIONS, SET_FAVOUIRITES, SET_MODAL_SCREEN, SET_REPORTS,
     SET_SEARCH_TYPE,
     SET_SEARCHED_FOR,
     SHOW_MODAL
@@ -72,5 +72,12 @@ export const setModalScreen = (screen) => {
     return {
         type: SET_MODAL_SCREEN,
         payload: screen
+    };
+};
+
+export const setFavourites = (favouriteData) => { //TODO: rename to smth more specific
+    return {
+        type: SET_FAVOUIRITES,
+        payload: favouriteData
     };
 };
