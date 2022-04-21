@@ -1,20 +1,21 @@
 import {combineReducers} from "redux";
 import {
-    ADD_REPORT,
+    ADD_REPORT, RESOLVE_ROUTE_CALL,
     SET_CURRENT_WEATHER,
     SET_DIRECTIONS,
     SET_FAVOUIRITES,
-    SET_REPORTS,
+    SET_REPORTS, SET_ROUTE_PLUS_HOURS,
     SET_SEARCHED_FOR
 } from "../actions/types";
 import {screenReducer} from "./screenReducer";
 
 const INITIAL_STATE = {
-    directions: {},
+    routes: [],
+    weatherOnRoutes: [],
     currentWeather: {},
     reports: [],
     searchedFor: "",
-    favourites: []
+    favourites: [],
 };
 
 const navReducer = (state = INITIAL_STATE, action) => {
@@ -23,11 +24,6 @@ const navReducer = (state = INITIAL_STATE, action) => {
             return {
                 ...state,
                 currentWeather: action.payload
-            }
-        case SET_DIRECTIONS:
-            return {
-                ...state,
-                directions: action.payload
             }
         case SET_SEARCHED_FOR:
             return {
@@ -48,6 +44,13 @@ const navReducer = (state = INITIAL_STATE, action) => {
             return {
                 ...state,
                 favourites: action.payload
+            }
+        case RESOLVE_ROUTE_CALL:
+            return {
+                ...state,
+                routes: action.payload.routeWithData,
+                weatherOnRoutes: action.payload.weatherData,
+                reports: action.payload.userReports?.reports
             }
         default:
             return state

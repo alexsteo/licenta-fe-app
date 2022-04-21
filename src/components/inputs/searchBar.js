@@ -3,7 +3,7 @@ import {Keyboard, View} from "react-native";
 import {Avatar, List, Searchbar, TouchableRipple} from "react-native-paper";
 import {useDispatch} from "react-redux";
 import {showModal} from "../../store/actions/actions";
-import {cities} from "../../res/smallCityList.js"
+import {cities} from "../../res/cityList.js"
 
 export const SearchBar = ({searchPlaceHolder, searchMethod}) => {
 
@@ -67,19 +67,26 @@ export const SearchBar = ({searchPlaceHolder, searchMethod}) => {
     const generateSuggestions = (location) => {
         const cityList = cities.map(city => {
             return {
-                name: city.city,
-                ascii: city.city_ascii,
-                lat: city.lat,
-                lng: city.lng,
-                county: city.admin_name,
-                country: city.country
+                name: city.City,
+                ascii: city.AccentCity,
+                lat: city.Latitude,
+                lng: city.Longitude,
+                country: city.Country,
+                pop: city.Population
             }
-        }).filter(city => city.name.includes(location) || city.ascii.includes(location)).slice(0, 5);
+        })
+            .filter(city => city.name?.includes(location) || city.ascii?.includes(location))
+            .sort((a, b) => {
+                let popA = !isNaN(parseInt(a.pop)) ? parseInt(a.pop) : 0;
+                let popB = !isNaN(parseInt(b.pop)) ? parseInt(b.pop) : 0;
+                return popB - popA;
+            })
+            .slice(0, 5);
         return cityList
             .map(
                 loc => {
                     return <List.Item
-                        title={loc.name + ", " + loc.county + ", " + loc.country}
+                        title={loc.ascii + ", " + loc.country.toUpperCase()}
                         key={loc.name + loc.lat + loc.lng}
                         left={props => <List.Icon {...props} icon="map-marker"/>}
                         onPress={() => {

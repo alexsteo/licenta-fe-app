@@ -1,8 +1,8 @@
 import {
     ADD_REPORT,
-    CLEAR_SELECTION, HIDE_MODAL,
+    CLEAR_SELECTION, HIDE_MODAL, RESOLVE_ROUTE_CALL,
     SET_CURRENT_WEATHER,
-    SET_DIRECTIONS, SET_FAVOUIRITES, SET_MODAL_SCREEN, SET_REPORTS,
+    SET_DIRECTIONS, SET_FAVOUIRITES, SET_MAP_VIEW, SET_MODAL_SCREEN, SET_REPORTS, SET_ROUTE_PLUS_HOURS,
     SET_SEARCH_TYPE,
     SET_SEARCHED_FOR,
     SHOW_MODAL
@@ -12,13 +12,6 @@ export const setCurrentWeather = (weather) => {
     return {
         type:SET_CURRENT_WEATHER,
         payload: weather,
-    };
-};
-
-export const setDirections = (directions) => {
-    return {
-        type: SET_DIRECTIONS,
-        payload: directions,
     };
 };
 
@@ -79,5 +72,26 @@ export const setFavourites = (favouriteData) => { //TODO: rename to smth more sp
     return {
         type: SET_FAVOUIRITES,
         payload: favouriteData
+    };
+};
+
+export const resolveRouteCall = (response) => {
+    return {
+        type: RESOLVE_ROUTE_CALL,
+        payload: response
+    };
+};
+
+export const setMapView = (routes) => {
+    return {
+        type: SET_MAP_VIEW,
+        payload: routes
+    };
+};
+
+export const setRoutePlusHours = (plusHours) => {
+    return {
+        type: SET_ROUTE_PLUS_HOURS,
+        payload: plusHours
     };
 };

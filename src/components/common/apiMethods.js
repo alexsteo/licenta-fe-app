@@ -1,9 +1,9 @@
 import GetLocation from "react-native-get-location";
 import {
-    addReport,
+    addReport, resolveRouteCall,
     setCurrentWeather,
     setDirections,
-    setFavourites,
+    setFavourites, setMapView,
     setReports,
     setSearchedFor
 } from "../../store/actions/actions";
@@ -15,12 +15,13 @@ export const getDirections = (searchTerm, dispatch) => {
     })
         .then(loc => {
             // let url = `http://10.0.2.2:8080/route/${loc.latitude},${loc.longitude}/${searchTerm.lat},${searchTerm.lng}`
-            let url = `http://10.0.2.2:8080/route/oradea/iasi`
+            // let url = `http://10.0.2.2:8080/route/oradea/iasi`
+            let url = `http://10.0.2.2:3000/fe`
             fetch(url)
                 .then(res => res.json())
                 .then(data => {
-                    dispatch(setDirections(data));
-                    dispatch(setSearchedFor(searchTerm));
+                    dispatch(resolveRouteCall(data));
+                    dispatch(setMapView(data.routeWithData));
                 });
         })
         .catch(error => {
@@ -31,7 +32,6 @@ export const getDirections = (searchTerm, dispatch) => {
 
 export const searchWeatherAtLocation = (searchTerm, dispatch) => {
     let url = `http://10.0.2.2:8080/weather/${searchTerm.lat}/${searchTerm.lng}`;
-    console.log(url)
     fetch(url)
         .then(res => res.json())
         .then(data => {

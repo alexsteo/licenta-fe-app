@@ -1,15 +1,25 @@
-import React, {useState} from 'react';
+import React, {useEffect} from 'react';
 import MapView, {Marker, Polyline, PROVIDER_GOOGLE} from "react-native-maps";
 import {Dimensions, StyleSheet, Text, View} from "react-native";
 import {useSelector} from "react-redux";
 
 export const Map = () => {
 
-    const directions = useSelector(state => state.nav.directions);
+    const routes = useSelector(state => state.nav.routes);
+    const weatherOnRoutes = useSelector(state => state.nav.weatherOnRoutes);
     const currentWeather = useSelector(state => state.nav.currentWeather);
     const searchType = useSelector(state => state.screen.searchType);
     const reports = useSelector(state => state.nav.reports);
     const favourites = useSelector(state => state.nav.favourites);
+    const mapView = useSelector(state => state.screen.mapView);
+    const routePlusHours = useSelector(state => state.screen.routePlusHours);
+
+    let mapComponent;
+
+    useEffect(() => {
+        changeMapToMapView();
+    }, [mapView]);
+
     let idx = 0;
 
     const getColor = () => {
@@ -21,24 +31,44 @@ export const Map = () => {
             case 1:
                 idx = idx + 1;
                 idx = idx % 3;
-                return '#0f0'
+                return '#ff0'
             case 2:
                 idx = idx + 1;
                 idx = idx % 3;
-                return '#00f'
+                return '#0f0'
             default:
                 return '#f00'
         }
     }
 
-    const addRoutes = (directions) => {
-        return !!directions.routes && searchType === 'navigation' ? directions.routes.map(route => {
-            return !!route ? <Polyline
-                coordinates={route}
-                strokeColor={getColor()}
-                strokeWidth={6}
-            /> : null;
-        }) : null
+    const addRoutes = (routes) => {
+        if (!routes || searchType !== 'navigation') return null;
+        return routes.sort((left, right) => left.score * 5 + left.length - right.score * 5 - right.length)
+            .map(route => {
+                return <Polyline
+                    coordinates={route.route}
+                    strokeColor={getColor()}
+                    strokeWidth={6}
+                />;
+            });
+    }
+
+    const addWeatherOnRoutes = (weatherOnRoutes, routePlusHours) => {
+        console.log(weatherOnRoutes)
+        if ((!!weatherOnRoutes && weatherOnRoutes.length <= 0) || searchType !== 'navigation') return null;
+        const weatherSet = weatherOnRoutes
+            .filter(weatherSet => weatherSet.plusHours === routePlusHours)[0].weatherInLocations
+        return weatherSet
+            .map(weather =>
+                <Marker coordinate={{
+                    latitude: !!weather.lat ? parseFloat(weather.lat) : 0,
+                    longitude: !!weather.lng ? parseFloat(weather.lng) : 0
+                }}>
+                    <View style={{ backgroundColor: "#a62a"}}>
+                        <Text>{parseFloat(weather.temperature - 272).toFixed(2)}</Text>
+                    </View>
+                </Marker>
+            )
     }
 
     const addWeatherData = (currentWeather) => {
@@ -107,26 +137,25 @@ export const Map = () => {
         }
     }
 
-    const map = () => {
-        return <View style={backgroundStyle}>
-            <MapView
-                provider={PROVIDER_GOOGLE}
-                style={backgroundStyle.map}
-                initialRegion={{
-                    latitude: 46.7657,
-                    longitude: 23.5943,
-                    latitudeDelta: 3,
-                    longitudeDelta: 3,
-                }}>
-                {addRoutes(directions)}
-                {addWeatherData(currentWeather)}
-                {addReports(reports)}
-                {addFavourites(favourites)}
-            </MapView>
-        </View>
+    const changeMapToMapView = () => {
+        mapComponent.animateToRegion(mapView);
     }
 
-    return map();
+    return <View style={backgroundStyle}>
+        <MapView
+            ref={(thisMap) => {
+                mapComponent = thisMap;
+            }}
+            provider={PROVIDER_GOOGLE}
+            style={backgroundStyle.map}
+            initialRegion={mapView}>
+            {addRoutes(routes)}
+            {addWeatherData(currentWeather)}
+            {addReports(reports)}
+            {addFavourites(favourites)}
+            {addWeatherOnRoutes(weatherOnRoutes, routePlusHours)}
+        </MapView>
+    </View>
 }
 
 const backgroundStyle = {
