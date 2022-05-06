@@ -7,12 +7,16 @@ import {Navigator} from "../inputs/navigator";
 import {useDispatch, useSelector} from "react-redux";
 import ModalSettings from "../modal/modalSettings";
 import {Slider} from "@miblanchard/react-native-slider";
-import {setRoutePlusHours} from "../../store/actions/actions";
+import {hideWeatherInfoScreen, setRoutePlusHours} from "../../store/actions/actions";
+import {Modal, Text} from "react-native-paper";
+import WeatherInfoScreen from "../weatherInfo/weatherInfoScreen";
 
 export const MapScreen = () => {
 
     const searchType = useSelector(state => state.screen.searchType);
     const plusHours = useSelector(state => state.screen.routePlusHours);
+    const showWeatherInfoScreen = useSelector(state => state.screen.showWeatherInfoScreen);
+    const weatherInfoScreenData = useSelector(state => state.screen.weatherInfoScreenData);
 
     const dispatch = useDispatch();
 
@@ -39,7 +43,11 @@ export const MapScreen = () => {
             height: Dimensions.get('window').height,
             width: Dimensions.get('window').width,
             padding: "15%"
-        }
+        },
+        weatherInfoStyle: {
+            backgroundColor: 'white',
+            padding: 20
+        },
     }
 
     const getSearchType = (key) => {
@@ -47,6 +55,8 @@ export const MapScreen = () => {
             case "navigation":
                 return <DirectionSearch style={style.searchBar}/>
             case "weather":
+                return <WeatherSearch style={style.searchBar}/>
+            case "favourites":
                 return <WeatherSearch style={style.searchBar}/>
             default:
                 return
@@ -57,14 +67,14 @@ export const MapScreen = () => {
         return (searchType === "navigation" || searchType === "weather") && <Slider
             value={plusHours}
             onValueChange={value => dispatch(setRoutePlusHours(value[0]))}
-            maximumValue={24}
+            maximumValue={23}
             step={1}/>
     }
 
     return (
         <View>
             <View>
-                <Map/>
+                <Map key={"map"}/>
                 <View style={style.sliderStyle}>
                     {getSliderIfNeeded()}
                 </View>
@@ -72,6 +82,7 @@ export const MapScreen = () => {
                 <Navigator style={style.navigatorStyle}/>
             </View>
             <ModalSettings style={style.modalStyle}/>
+            <WeatherInfoScreen/>
         </View>
     )
 }

@@ -1,12 +1,11 @@
 import * as React from 'react';
-import {useState} from 'react';
-import {Button, List, Modal, Portal, Provider, Switch, ToggleButton} from 'react-native-paper';
+import {Modal, Portal, Provider} from 'react-native-paper';
 import {useDispatch, useSelector} from "react-redux";
 import {hideModal, setModalScreen} from "../../store/actions/actions";
-import {submitReport} from "../common/apiMethods";
 import {MainModal} from "./mainModal";
 import {ReportModal} from "./reportModal";
 import {FavouriteModal} from "./favouriteModal";
+import {SettingsModal} from "./settingsModal";
 
 const ModalSettings = () => {
     const dispatch = useDispatch();
@@ -16,13 +15,14 @@ const ModalSettings = () => {
 
     const containerStyle = {backgroundColor: 'white', padding: 20};
 
-
     const chooseModalScreen = (screen) => {
         switch (screen) {
             case 'main':
                 return <MainModal/>;
             case 'report':
                 return <ReportModal/>;
+            case 'settings':
+                return <SettingsModal/>;
             case 'favourite':
                 return <FavouriteModal/>;
             default:
@@ -33,7 +33,11 @@ const ModalSettings = () => {
     return (
         <Provider>
             <Portal>
-                <Modal visible={visible} onDismiss={() => dispatch(hideModal())} contentContainerStyle={containerStyle}>
+                <Modal visible={visible} onDismiss={() => {
+                    dispatch(hideModal())
+                    dispatch(setModalScreen('main'))
+                }}
+                       contentContainerStyle={containerStyle}>
                     {chooseModalScreen(screen)}
                 </Modal>
             </Portal>

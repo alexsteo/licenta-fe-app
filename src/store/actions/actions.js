@@ -1,11 +1,11 @@
 import {
-    ADD_REPORT,
-    CLEAR_SELECTION, HIDE_MODAL, RESOLVE_ROUTE_CALL,
+    ADD_REPORT, ADD_TO_FAVOURITES,
+    CLEAR_SELECTION, DELETE_FROM_FAVOURITE, HIDE_MODAL, HIDE_WEATHER_INFO_SCREEN, RESOLVE_ROUTE_CALL,
     SET_CURRENT_WEATHER,
-    SET_DIRECTIONS, SET_FAVOUIRITES, SET_MAP_VIEW, SET_MODAL_SCREEN, SET_REPORTS, SET_ROUTE_PLUS_HOURS,
+    SET_DIRECTIONS, SET_FAVOUIRITES, SET_MAP_VIEW, SET_MODAL_SCREEN, SET_NIGHT_MODE, SET_REPORTS, SET_ROUTE_PLUS_HOURS,
     SET_SEARCH_TYPE,
-    SET_SEARCHED_FOR,
-    SHOW_MODAL
+    SET_SEARCHED_FOR, SET_WEATHER_INFO_SCREEN_TYPE,
+    SHOW_MODAL, SHOW_WEATHER_INFO_SCREEN
 } from "./types";
 
 export const setCurrentWeather = (weather) => {
@@ -75,6 +75,20 @@ export const setFavourites = (favouriteData) => { //TODO: rename to smth more sp
     };
 };
 
+export const addToFavourites = (location) => {
+    return {
+        type: ADD_TO_FAVOURITES,
+        payload: location
+    }
+};
+
+export const deleteFromFavourites = (city) => {
+    return {
+        type: DELETE_FROM_FAVOURITE,
+        payload: city
+    }
+};
+
 export const resolveRouteCall = (response) => {
     return {
         type: RESOLVE_ROUTE_CALL,
@@ -95,3 +109,30 @@ export const setRoutePlusHours = (plusHours) => {
         payload: plusHours
     };
 };
+
+export const showWeatherInfoScreen = (data) => {
+    return {
+        type: SHOW_WEATHER_INFO_SCREEN,
+        payload: data
+    }
+};
+
+export const hideWeatherInfoScreen = () => {
+    return {
+        type: HIDE_WEATHER_INFO_SCREEN,
+    }
+};
+
+export const setWeatherInfoScreenType = (screenType) => {
+    return {
+        type: SET_WEATHER_INFO_SCREEN_TYPE,
+        payload: screenType
+    }
+};
+
+export const setNightMode = (nightMode) => {
+    return {
+        type: SET_NIGHT_MODE,
+        payload: nightMode
+    }
+}

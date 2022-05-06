@@ -6,12 +6,20 @@ import {
     SET_SEARCH_TYPE,
     SHOW_MODAL,
     SET_ROUTE_PLUS_HOURS,
+    SHOW_WEATHER_INFO_SCREEN,
+    HIDE_WEATHER_INFO_SCREEN,
+    SET_WEATHER_INFO_SCREEN_TYPE,
+    SET_NIGHT_MODE,
 } from "../actions/types";
 
 const INITIAL_STATE = {
     searchType: "navigation",
     showModal: false,
     modalScreen: 'main',
+    showWeatherInfoScreen: false,
+    weatherInfoScreenData: {},
+    weatherInfoScreenType: '',
+    nightMode: false,
     routePlusHours: 0,
     mapView: {
         latitude: 46.7657,
@@ -73,6 +81,28 @@ export const screenReducer = (state = INITIAL_STATE, action) => {
             return {
                 ...state,
                 routePlusHours: action.payload
+            }
+        case SHOW_WEATHER_INFO_SCREEN:
+            return {
+                ...state,
+                showWeatherInfoScreen: true,
+                weatherInfoScreenData: action.payload
+            }
+        case HIDE_WEATHER_INFO_SCREEN:
+            return {
+                ...state,
+                showWeatherInfoScreen: false,
+                weatherInfoScreenData: {}
+            }
+        case SET_WEATHER_INFO_SCREEN_TYPE:
+            return {
+                ...state,
+                weatherInfoScreenType: action.payload
+            }
+        case SET_NIGHT_MODE:
+            return {
+                ...state,
+                nightMode: action.payload
             }
         default:
             return state

@@ -1,7 +1,9 @@
 import React, {useEffect} from 'react';
 import MapView, {Marker, Polyline, PROVIDER_GOOGLE} from "react-native-maps";
-import {Dimensions, StyleSheet, Text, View} from "react-native";
-import {useSelector} from "react-redux";
+import {Dimensions, StyleSheet, View} from "react-native";
+import {useDispatch, useSelector} from "react-redux";
+import {setWeatherInfoScreenType, showWeatherInfoScreen} from "../../store/actions/actions";
+import {MapStyles} from "../common/mapStyles";
 
 export const Map = () => {
 
@@ -13,6 +15,9 @@ export const Map = () => {
     const favourites = useSelector(state => state.nav.favourites);
     const mapView = useSelector(state => state.screen.mapView);
     const routePlusHours = useSelector(state => state.screen.routePlusHours);
+    const nightMode = useSelector(state => state.screen.nightMode);
+
+    const dispatch = useDispatch();
 
     let mapComponent;
 
@@ -41,34 +46,54 @@ export const Map = () => {
         }
     }
 
+    const calculatePinColor = (weather) => {
+        let color = 'green';
+        if (weather.temperature < 5 || weather.rain > 0 || weather.snow > 0 || weather.clouds > 80) {
+            color = 'yellow';
+        }
+        if (weather.temperature < 0.5 || weather.rain > 0.5 || weather.snow > 0.5) {
+            color = 'red';
+        }
+        return color;
+    }
+
+    const openWeatherScreen = (data, screenType) => {
+        dispatch(showWeatherInfoScreen(data));
+        dispatch(setWeatherInfoScreenType(screenType));
+    }
+
     const addRoutes = (routes) => {
         if (!routes || searchType !== 'navigation') return null;
         return routes.sort((left, right) => left.score * 5 + left.length - right.score * 5 - right.length)
-            .map(route => {
+            .map(each => {
                 return <Polyline
-                    coordinates={route.route}
+                    coordinates={each.route}
                     strokeColor={getColor()}
                     strokeWidth={6}
+                    tappable={true}
+                    onPress={() => {
+                        const {route, ...routeData} = each;
+                        openWeatherScreen(routeData, 'route');
+                    }}
                 />;
             });
     }
 
     const addWeatherOnRoutes = (weatherOnRoutes, routePlusHours) => {
-        console.log(weatherOnRoutes)
         if ((!!weatherOnRoutes && weatherOnRoutes.length <= 0) || searchType !== 'navigation') return null;
         const weatherSet = weatherOnRoutes
             .filter(weatherSet => weatherSet.plusHours === routePlusHours)[0].weatherInLocations
         return weatherSet
             .map(weather =>
-                <Marker coordinate={{
-                    latitude: !!weather.lat ? parseFloat(weather.lat) : 0,
-                    longitude: !!weather.lng ? parseFloat(weather.lng) : 0
-                }}>
-                    <View style={{ backgroundColor: "#a62a"}}>
-                        <Text>{parseFloat(weather.temperature - 272).toFixed(2)}</Text>
-                    </View>
+                <Marker key={Math.random()}
+                        coordinate={{
+                            latitude: !!weather.lat ? parseFloat(weather.lat) : 0,
+                            longitude: !!weather.lng ? parseFloat(weather.lng) : 0
+                        }}
+                        pinColor={calculatePinColor(weather).toString()}
+                        onPress={() => openWeatherScreen(weather, 'checkpoint')}>
                 </Marker>
-            )
+            );
     }
 
     const addWeatherData = (currentWeather) => {
@@ -76,43 +101,40 @@ export const Map = () => {
             <Marker coordinate={{
                 latitude: !!currentWeather.lat ? parseFloat(currentWeather.lat) : 0,
                 longitude: !!currentWeather.lng ? parseFloat(currentWeather.lng) : 0
-            }}>
-                <View style={{backgroundColor: "red", padding: 10}}>
-                    <Text>{currentWeather.name + "    " + (currentWeather.temperature - 273.15).toFixed(2)}</Text>
-                </View>
+            }}
+                    pinColor={'green'}
+                    onPress={() => openWeatherScreen(currentWeather, 'weather')}>
             </Marker>
         ) : null;
     }
 
     const addReports = (reports) => {
-        return null;
-        // return searchType === 'navigation' ? (
-        //         reports.map(report => (
-        //                 <Marker key={Math.random()} coordinate={{
-        //                     latitude: parseFloat(report.lat),
-        //                     longitude: parseFloat(report.lng)
-        //                 }}>
-        //                     <View style={{backgroundColor: getReportColor(report.type), padding: 10}}>
-        //                         <Text>{report.type}</Text>
-        //                     </View>
-        //                 </Marker>
-        //             )
-        //         )
-        //     ) :
-        //     null;
+        return searchType === 'navigation' ? (
+                reports.map(report => (
+                        <Marker key={Math.random()}
+                                coordinate={{
+                                    latitude: parseFloat(report.lat),
+                                    longitude: parseFloat(report.lng)
+                                }}
+                                pinColor={'blue'}
+                                onPress={() => openWeatherScreen(report, 'report')}>
+                        </Marker>
+                    )
+                )
+            ) :
+            null;
     }
 
     const addFavourites = (favourites) => {
         return searchType === 'favourites' ? (
                 favourites.map(fav => (
-                        <Marker key={Math.random()} coordinate={{
-                            latitude: parseFloat(fav.lat),
-                            longitude: parseFloat(fav.lng)
-
-                        }}>
-                            <View style={{backgroundColor: "gold", padding: 10}}>
-                                <Text>{fav.name + "    " + (fav.temperature - 273.15).toFixed(2)}</Text>
-                            </View>
+                        <Marker key={Math.random()}
+                                coordinate={{
+                                    latitude: parseFloat(fav.lat),
+                                    longitude: parseFloat(fav.lng)
+                                }}
+                                pinColor={'yellow'}
+                                onPress={() => openWeatherScreen(fav, 'favourites')}>
                         </Marker>
                     )
                 )
@@ -148,7 +170,8 @@ export const Map = () => {
             }}
             provider={PROVIDER_GOOGLE}
             style={backgroundStyle.map}
-            initialRegion={mapView}>
+            initialRegion={mapView}
+            customMapStyle={nightMode ? MapStyles.nightMode : MapStyles.lightMode}>
             {addRoutes(routes)}
             {addWeatherData(currentWeather)}
             {addReports(reports)}

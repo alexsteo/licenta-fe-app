@@ -1,9 +1,9 @@
 import GetLocation from "react-native-get-location";
 import {
-    addReport, resolveRouteCall,
+    addReport, addToFavourites, deleteFromFavourites, hideModal, hideWeatherInfoScreen, resolveRouteCall,
     setCurrentWeather,
     setDirections,
-    setFavourites, setMapView,
+    setFavourites, setMapView, setModalScreen,
     setReports,
     setSearchedFor
 } from "../../store/actions/actions";
@@ -16,6 +16,7 @@ export const getDirections = (searchTerm, dispatch) => {
         .then(loc => {
             // let url = `http://10.0.2.2:8080/route/${loc.latitude},${loc.longitude}/${searchTerm.lat},${searchTerm.lng}`
             // let url = `http://10.0.2.2:8080/route/oradea/iasi`
+            // console.log(url)
             let url = `http://10.0.2.2:3000/fe`
             fetch(url)
                 .then(res => res.json())
@@ -88,4 +89,41 @@ export const submitReport = (type, dispatch) => {
             const {code, message} = error;
             console.warn(code, message);
         })
+}
+
+export const addFavourite = (location, dispatch) => {
+    const url = `http://10.0.2.2:8080/favourites/insert`;
+    const data = {
+        username: 'this_one',
+        lat: location.lat,
+        lng: location.lng,
+        city: location.name
+    };
+    const options = {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data),
+    };
+    fetch(url, options)
+        .then(res => res.json())
+        .then(data => {
+            dispatch(addToFavourites(data));
+            dispatch(setModalScreen("main"));
+            dispatch(hideModal());
+        });
+}
+
+export const deleteFavourite = (city, dispatch) => {
+    const url = `http://10.0.2.2:8080/favourites/city/${city}`;
+    const options = {
+        method: 'DELETE',
+    };
+    fetch(url, options)
+        .then(res => res.json())
+        .then(data => {
+            dispatch(hideWeatherInfoScreen())
+            dispatch(deleteFromFavourites({city: city, success: data}))
+        });
 }

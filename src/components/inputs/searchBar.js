@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {Keyboard, View} from "react-native";
 import {Avatar, List, Searchbar, TouchableRipple} from "react-native-paper";
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {showModal} from "../../store/actions/actions";
 import {cities} from "../../res/cityList.js"
 
@@ -9,6 +9,8 @@ export const SearchBar = ({searchPlaceHolder, searchMethod}) => {
 
     const [searchTerm, setSearchTerm] = useState("");
     const [showSuggestions, setShowSuggestions] = useState(false);
+
+    const modalIsOpen = useSelector(state => state.screen.showModal);
 
     const dispatch = useDispatch();
 
@@ -99,7 +101,7 @@ export const SearchBar = ({searchPlaceHolder, searchMethod}) => {
     }
 
     const getSuggestions = () => {
-        return showSuggestions &&
+        return showSuggestions && !modalIsOpen &&
             <View style={searchStyle.suggestionListStyle}>
                 {generateSuggestions(searchTerm)}
             </View>

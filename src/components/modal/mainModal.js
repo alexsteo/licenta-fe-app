@@ -20,6 +20,12 @@ export const MainModal = () => {
             title="Report a problem on the road"
             onPress={() => dispatch(setModalScreen('report'))}
             left={props => <List.Icon {...props} icon="alert-octagon"/>}
-        />
+        />,
+        <List.Item
+            key={3}
+            title="Settings"
+            onPress={() => dispatch(setModalScreen('settings'))}
+            left={props => <List.Icon {...props} icon="cog"/>}
+        />,
     ]
 };

@@ -9,8 +9,8 @@ export const MainScreen = () => {
     const dispatch = useDispatch();
 
     useEffect(() => {
-        getUserReports(dispatch);
-        getFavouritesForUser(dispatch, 'boss')
+        // getUserReports(dispatch);
+        getFavouritesForUser(dispatch, 'this_one');
     }, [])
 
     return (
