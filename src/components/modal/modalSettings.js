@@ -1,19 +1,36 @@
 import * as React from 'react';
-import {Modal, Portal, Provider} from 'react-native-paper';
+import {Modal, Portal, Provider, Text} from 'react-native-paper';
 import {useDispatch, useSelector} from "react-redux";
 import {hideModal, setModalScreen} from "../../store/actions/actions";
 import {MainModal} from "./mainModal";
 import {ReportModal} from "./reportModal";
 import {FavouriteModal} from "./favouriteModal";
 import {SettingsModal} from "./settingsModal";
+import {View} from "react-native";
+
+const style = {
+    containerStyle: {
+        backgroundColor: 'white',
+        padding: 20,
+        paddingTop: 0
+    },
+    modalStyle: {
+        position: 'absolute',
+        top: 50,
+        height: 500,
+        paddingLeft: '3%',
+        paddingRight: '3%',
+    },
+    modalViewStyle: {
+        height: '100%',
+    },
+}
 
 const ModalSettings = () => {
     const dispatch = useDispatch();
 
     const visible = useSelector(state => state.screen.showModal);
     const screen = useSelector(state => state.screen.modalScreen);
-
-    const containerStyle = {backgroundColor: 'white', padding: 20};
 
     const chooseModalScreen = (screen) => {
         switch (screen) {
@@ -33,12 +50,19 @@ const ModalSettings = () => {
     return (
         <Provider>
             <Portal>
-                <Modal visible={visible} onDismiss={() => {
-                    dispatch(hideModal())
-                    dispatch(setModalScreen('main'))
-                }}
-                       contentContainerStyle={containerStyle}>
-                    {chooseModalScreen(screen)}
+                <Modal
+                    style={style.modalStyle}
+                    visible={visible}
+                    onDismiss={() => {
+                        dispatch(hideModal())
+                        dispatch(setModalScreen('main'))
+                    }}
+                    contentContainerStyle={style.containerStyle}
+                >
+                    <View style={style.modalViewStyle}>
+                        <Text>Replace me with a logo</Text>
+                        {chooseModalScreen(screen)}
+                    </View>
                 </Modal>
             </Portal>
         </Provider>

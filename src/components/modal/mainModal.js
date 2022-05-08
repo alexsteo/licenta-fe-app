@@ -6,8 +6,6 @@ import {setModalScreen} from "../../store/actions/actions";
 export const MainModal = () => {
     const dispatch = useDispatch();
 
-    const containerStyle = {backgroundColor: 'white', padding: 20};
-
     return [
         <List.Item
             key={1}

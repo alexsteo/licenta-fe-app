@@ -2,10 +2,11 @@ import React, {useEffect} from 'react';
 import MapView, {Marker, Polyline, PROVIDER_GOOGLE} from "react-native-maps";
 import {Dimensions, StyleSheet, View} from "react-native";
 import {useDispatch, useSelector} from "react-redux";
-import {setWeatherInfoScreenType, showWeatherInfoScreen} from "../../store/actions/actions";
+import {setMapView, setWeatherInfoScreenType, showWeatherInfoScreen} from "../../store/actions/actions";
 import {MapStyles} from "../common/mapStyles";
+import GetLocation from "react-native-get-location";
 
-export const Map = () => {
+export const Map = ({navToLocFunc, rotateToNorthFunc}) => {
 
     const routes = useSelector(state => state.nav.routes);
     const weatherOnRoutes = useSelector(state => state.nav.weatherOnRoutes);
@@ -23,6 +24,9 @@ export const Map = () => {
 
     useEffect(() => {
         changeMapToMapView();
+        navToLocation();
+        rotateToNorthFunc.current = pointToTheNorth;
+        navToLocFunc.current = navToLocation;
     }, [mapView]);
 
     let idx = 0;
@@ -142,25 +146,34 @@ export const Map = () => {
             null;
     }
 
-    const getReportColor = (type) => {
-        switch (type) {
-            case 'SNOW':
-                return '#A2BCE0'
-            case 'HEAVY_RAIN':
-                return '#0B5563'
-            case 'FOG':
-                return '#5E5C6C'
-            case 'TRAFFIC':
-                return '#E53D00'
-            case 'ROAD_ACCIDENT':
-                return '#F13030'
-            default:
-                return '#F13030'
-        }
-    }
-
     const changeMapToMapView = () => {
         mapComponent.animateToRegion(mapView);
+    }
+
+    const navToLocation = () => {
+        GetLocation.getCurrentPosition({
+            enableHighAccuracy: true,
+            timeout: 15000,
+        }).then(loc => {
+            const region = {
+                latitude: loc.latitude,
+                longitude: loc.longitude,
+                latitudeDelta: 3,
+                longitudeDelta: 3,
+            }
+            mapComponent.animateToRegion(region);
+        })
+    }
+
+    const pointToTheNorth = () => {
+        mapComponent.animateCamera({
+            center: {
+                latitude: mapView.latitude,
+                longitude: mapView.longitude
+            },
+            pitch: 0,
+            zoom: 5
+        })
     }
 
     return <View style={backgroundStyle}>

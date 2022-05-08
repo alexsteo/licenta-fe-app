@@ -1,16 +1,30 @@
 import {
-    ADD_REPORT, ADD_TO_FAVOURITES,
-    CLEAR_SELECTION, DELETE_FROM_FAVOURITE, HIDE_MODAL, HIDE_WEATHER_INFO_SCREEN, RESOLVE_ROUTE_CALL,
+    ADD_REPORT,
+    ADD_TO_FAVOURITES,
+    CLEAR_SELECTION,
+    DELETE_FROM_FAVOURITE,
+    HIDE_MODAL,
+    HIDE_WEATHER_INFO_SCREEN,
+    RESOLVE_ROUTE_CALL,
     SET_CURRENT_WEATHER,
-    SET_DIRECTIONS, SET_FAVOUIRITES, SET_MAP_VIEW, SET_MODAL_SCREEN, SET_NIGHT_MODE, SET_REPORTS, SET_ROUTE_PLUS_HOURS,
+    SET_FAVOUIRITES,
+    SET_LANGUAGE,
+    SET_MAP_VIEW,
+    SET_MODAL_SCREEN,
+    SET_NIGHT_MODE,
+    SET_REPORTS,
+    SET_ROUTE_PLUS_HOURS,
     SET_SEARCH_TYPE,
-    SET_SEARCHED_FOR, SET_WEATHER_INFO_SCREEN_TYPE,
-    SHOW_MODAL, SHOW_WEATHER_INFO_SCREEN
+    SET_SEARCHED_FOR,
+    SET_UNITS,
+    SET_WEATHER_INFO_SCREEN_TYPE,
+    SHOW_MODAL,
+    SHOW_WEATHER_INFO_SCREEN
 } from "./types";
 
 export const setCurrentWeather = (weather) => {
     return {
-        type:SET_CURRENT_WEATHER,
+        type: SET_CURRENT_WEATHER,
         payload: weather,
     };
 };
@@ -134,5 +148,19 @@ export const setNightMode = (nightMode) => {
     return {
         type: SET_NIGHT_MODE,
         payload: nightMode
+    }
+};
+
+export const setUnits = (units) => {
+    return {
+        type: SET_UNITS,
+        payload: units
+    }
+};
+
+export const setLanguage = (language) => {
+    return {
+        type: SET_LANGUAGE,
+        payload: language
     }
 }

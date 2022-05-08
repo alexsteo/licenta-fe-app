@@ -9,7 +9,7 @@ import {
     SHOW_WEATHER_INFO_SCREEN,
     HIDE_WEATHER_INFO_SCREEN,
     SET_WEATHER_INFO_SCREEN_TYPE,
-    SET_NIGHT_MODE,
+    SET_NIGHT_MODE, SET_LANGUAGE, SET_UNITS,
 } from "../actions/types";
 
 const INITIAL_STATE = {
@@ -20,6 +20,8 @@ const INITIAL_STATE = {
     weatherInfoScreenData: {},
     weatherInfoScreenType: '',
     nightMode: false,
+    units: 'metric',
+    language: 'en',
     routePlusHours: 0,
     mapView: {
         latitude: 46.7657,
@@ -103,6 +105,16 @@ export const screenReducer = (state = INITIAL_STATE, action) => {
             return {
                 ...state,
                 nightMode: action.payload
+            }
+        case SET_LANGUAGE:
+            return {
+                ...state,
+                language: action.payload
+            }
+        case SET_UNITS:
+            return {
+                ...state,
+                units: action.payload
             }
         default:
             return state

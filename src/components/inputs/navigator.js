@@ -16,7 +16,6 @@ export const Navigator = (props) => {
     const onMenuItemPress = (key) => {
         setScreen(key);
         dispatch(setSearchType(key));
-        // dispatch(clearSelection());
     }
 
     return (

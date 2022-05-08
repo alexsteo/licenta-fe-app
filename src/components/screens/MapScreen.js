@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useRef} from 'react';
 import {Dimensions, View} from "react-native";
 import {Map} from "../map/Map";
 import {DirectionSearch} from "../inputs/directionSearch";
@@ -7,9 +7,9 @@ import {Navigator} from "../inputs/navigator";
 import {useDispatch, useSelector} from "react-redux";
 import ModalSettings from "../modal/modalSettings";
 import {Slider} from "@miblanchard/react-native-slider";
-import {hideWeatherInfoScreen, setRoutePlusHours} from "../../store/actions/actions";
-import {Modal, Text} from "react-native-paper";
+import {setRoutePlusHours} from "../../store/actions/actions";
 import WeatherInfoScreen from "../weatherInfo/weatherInfoScreen";
+import {Avatar, TouchableRipple} from "react-native-paper";
 
 export const MapScreen = () => {
 
@@ -17,6 +17,9 @@ export const MapScreen = () => {
     const plusHours = useSelector(state => state.screen.routePlusHours);
     const showWeatherInfoScreen = useSelector(state => state.screen.showWeatherInfoScreen);
     const weatherInfoScreenData = useSelector(state => state.screen.weatherInfoScreenData);
+
+    const rotateToNorthFunc = useRef(null);
+    const navToLocFunc = useRef(null);
 
     const dispatch = useDispatch();
 
@@ -30,24 +33,26 @@ export const MapScreen = () => {
             width: Dimensions.get('window').width,
         },
         navigatorStyle: {
-            position: 'absolute',
-            top: Dimensions.get('window').height - 40,
+            marginTop: 100
         },
         sliderStyle: {
             position: 'absolute',
-            top: Dimensions.get('window').height - 180,
+            top: Dimensions.get('window').height - 170,
             left: Dimensions.get('window').width * 0.1,
             width: Dimensions.get('window').width * 0.8,
-        },
-        modalStyle: {
-            height: Dimensions.get('window').height,
-            width: Dimensions.get('window').width,
-            padding: "15%"
         },
         weatherInfoStyle: {
             backgroundColor: 'white',
             padding: 20
         },
+        buttonViewStyle: {
+            position: 'absolute',
+            top: Dimensions.get('window').height - 275,
+            left: Dimensions.get('window').width * 0.87,
+        },
+        buttonStyle: {
+            marginTop: 10
+        }
     }
 
     const getSearchType = (key) => {
@@ -74,15 +79,33 @@ export const MapScreen = () => {
     return (
         <View>
             <View>
-                <Map key={"map"}/>
+                <Map key={"map"} navToLocFunc={navToLocFunc} rotateToNorthFunc={rotateToNorthFunc}/>
                 <View style={style.sliderStyle}>
                     {getSliderIfNeeded()}
                 </View>
                 {getSearchType(searchType)}
-                <Navigator style={style.navigatorStyle}/>
+                <View style={style.buttonViewStyle}>
+                    <TouchableRipple style={style.buttonStyle} onPress={() => navToLocFunc.current()}
+                        mode="contained" title="lang">
+                        <Avatar.Image size={40}
+                            source={require('../../res/location.png')}/>
+                    </TouchableRipple>
+                    <TouchableRipple style={style.buttonStyle} onPress={() => rotateToNorthFunc.current()}
+                        mode="contained" title="lang">
+                        <Avatar.Image size={40}
+                            source={require('../../res/north.png')}/>
+                    </TouchableRipple>
+                </View>
+                <View
+                    style={style.navigatorStyle}
+                >
+                    <Navigator/>
+                </View>
+                <ModalSettings
+                    style={style.modalStyle}
+                />
+                <WeatherInfoScreen/>
             </View>
-            <ModalSettings style={style.modalStyle}/>
-            <WeatherInfoScreen/>
         </View>
     )
 }

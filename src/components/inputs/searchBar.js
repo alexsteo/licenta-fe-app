@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {Keyboard, View} from "react-native";
 import {Avatar, List, Searchbar, TouchableRipple} from "react-native-paper";
 import {useDispatch, useSelector} from "react-redux";
-import {showModal} from "../../store/actions/actions";
+import {hideModal, showModal} from "../../store/actions/actions";
 import {cities} from "../../res/cityList.js"
 
 export const SearchBar = ({searchPlaceHolder, searchMethod}) => {
@@ -107,6 +107,10 @@ export const SearchBar = ({searchPlaceHolder, searchMethod}) => {
             </View>
     }
 
+    const toggleModal = () => {
+        modalIsOpen ? dispatch(hideModal()) : dispatch(showModal());
+    }
+
     return (
         <View>
             <View style={searchStyle}>
@@ -117,7 +121,7 @@ export const SearchBar = ({searchPlaceHolder, searchMethod}) => {
                         onChangeText={text => setSearchTerm(text)}
                         style={searchStyle.searchBoxStyle}
                     />
-                    <TouchableRipple style={searchStyle.rippleStyle} onPress={() => dispatch(showModal())}
+                    <TouchableRipple style={searchStyle.rippleStyle} onPress={() => toggleModal()}
                                      mode="contained" title="aaa">
                         <Avatar.Image size={50} source={require('../../res/profile.png')}/>
                     </TouchableRipple>
