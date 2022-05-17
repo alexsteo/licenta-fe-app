@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {List} from 'react-native-paper';
+import {Button} from 'react-native-paper';
 import {useDispatch} from "react-redux";
 import {setModalScreen} from "../../store/actions/actions";
 
@@ -7,23 +7,23 @@ export const MainModal = () => {
     const dispatch = useDispatch();
 
     return [
-        <List.Item
+        <Button
             key={1}
             title="Add Favourite Location"
             onPress={() => dispatch(setModalScreen('favourite'))}
-            left={props => <List.Icon {...props} icon="heart-outline"/>}
-        />,
-        <List.Item
+            icon="heart-outline"
+        > Add Favourite Location </Button>,
+        <Button
             key={2}
             title="Report a problem on the road"
             onPress={() => dispatch(setModalScreen('report'))}
-            left={props => <List.Icon {...props} icon="alert-octagon"/>}
-        />,
-        <List.Item
+            icon="alert-octagon"
+        > Report a problem on the road </Button>,
+        <Button
             key={3}
             title="Settings"
             onPress={() => dispatch(setModalScreen('settings'))}
-            left={props => <List.Icon {...props} icon="cog"/>}
-        />,
+            icon="cog"
+        > Settings </Button>,
     ]
 };

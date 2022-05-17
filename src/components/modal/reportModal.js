@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {useState} from 'react';
-import {Button, List, Switch, ToggleButton} from 'react-native-paper';
-import {useDispatch} from "react-redux";
+import {Button, List, Text, ToggleButton} from 'react-native-paper';
+import {useDispatch, useSelector} from "react-redux";
 import {setModalScreen} from "../../store/actions/actions";
 import {submitReport} from "../common/apiMethods";
 
@@ -9,32 +9,49 @@ export const ReportModal = () => {
     const dispatch = useDispatch();
 
     const [type, setType] = useState("");
-    const [switchOn, setSwitchOn] = useState(false);
+
+    const userEmail = useSelector(state => state.screen.email);
 
     const reportProblem = (type) => {
         submitReport(type, dispatch);
     }
 
-    return [
-        <List.Item
-            key={1}
-            onPress={() => dispatch(setModalScreen('main'))}
-            left={props => <List.Icon {...props} icon="arrow-left-thick"/>}
-        />,
-        <List.Item
-            key={2}
-            title="Report a problem on your location"
-        />,
-        <ToggleButton.Row onValueChange={value => setType(value)} value={type} key={3}>
-            <ToggleButton icon="snowflake" value="SNOW"/>
-            <ToggleButton icon="weather-pouring" value="HEAVY_RAIN"/>
-            <ToggleButton icon="weather-fog" value="FOG"/>
-            <ToggleButton icon="car-multiple" value="TRAFFIC"/>
-            <ToggleButton icon="car-traction-control" value="ROAD_ACCIDENT"/>
-        </ToggleButton.Row>,
-        <Switch value={switchOn} onValueChange={() => setSwitchOn(!switchOn)} key={4}/>,
-        <Button icon="camera" mode="contained" onPress={() => reportProblem(type)} key={5}>
-            Press me
-        </Button>
-    ]
+    const getScreen = () => {
+        if (!!userEmail && userEmail !== '') {
+            return ([
+                    <Button
+                        key={1}
+                        onPress={() => dispatch(setModalScreen('main'))}
+                        icon="arrow-left-thick"
+                    > Back </Button>,
+                    <List.Item
+                        key={2}
+                        title="Report a problem on your location"
+                    />,
+                    <ToggleButton.Row onValueChange={value => setType(value)} value={type} key={3}>
+                        <ToggleButton icon="snowflake" value="SNOW" key={11}/>
+                        <ToggleButton icon="weather-pouring" value="HEAVY_RAIN" key={12}/>
+                        <ToggleButton icon="weather-fog" value="FOG" key={13}/>
+                        <ToggleButton icon="car-multiple" value="TRAFFIC" key={14}/>
+                        <ToggleButton icon="car-traction-control" value="ROAD_ACCIDENT" key={15}/>
+                    </ToggleButton.Row>,
+                    <Button icon="camera" mode="contained" onPress={() => reportProblem(type)} key={5}>
+                        Press me
+                    </Button>]
+            );
+
+        } else {
+            return ([
+                    <Button
+                        key={1}
+                        onPress={() => dispatch(setModalScreen('main'))}
+                        icon="arrow-left-thick"
+                    > Back </Button>,
+                    <Text>Please Login to report!</Text>
+                ]
+            )
+        }
+    }
+
+    return getScreen();
 };

@@ -1,15 +1,20 @@
 import {
     CLEAR_SELECTION,
     HIDE_MODAL,
-    SET_MAP_VIEW,
-    SET_MODAL_SCREEN,
-    SET_SEARCH_TYPE,
-    SHOW_MODAL,
-    SET_ROUTE_PLUS_HOURS,
-    SHOW_WEATHER_INFO_SCREEN,
     HIDE_WEATHER_INFO_SCREEN,
+    LOGIN,
+    LOGOUT,
+    SET_LANGUAGE,
+    SET_MAP_VIEW,
+    SET_MAP_VIEW_WITH_COORDS,
+    SET_MODAL_SCREEN,
+    SET_NIGHT_MODE,
+    SET_ROUTE_PLUS_HOURS,
+    SET_SEARCH_TYPE,
+    SET_UNITS,
     SET_WEATHER_INFO_SCREEN_TYPE,
-    SET_NIGHT_MODE, SET_LANGUAGE, SET_UNITS,
+    SHOW_MODAL,
+    SHOW_WEATHER_INFO_SCREEN,
 } from "../actions/types";
 
 const INITIAL_STATE = {
@@ -22,6 +27,7 @@ const INITIAL_STATE = {
     nightMode: false,
     units: 'metric',
     language: 'en',
+    email: '',
     routePlusHours: 0,
     mapView: {
         latitude: 46.7657,
@@ -32,7 +38,7 @@ const INITIAL_STATE = {
 };
 
 const calculateMapView = (routes) => {
-    const allCoordinates = routes.reduce((acc , current) => acc.concat(current.route), [])
+    const allCoordinates = routes.reduce((acc, current) => acc.concat(current.route), [])
     const maxLat = allCoordinates.reduce((acc, current) => current.latitude > acc ? current.latitude : acc, -181)
     const minLat = allCoordinates.reduce((acc, current) => current.latitude < acc ? current.latitude : acc, 181)
     const maxLng = allCoordinates.reduce((acc, current) => current.longitude > acc ? current.longitude : acc, -181)
@@ -40,7 +46,7 @@ const calculateMapView = (routes) => {
     const centerLat = (minLat + maxLat) / 2;
     const centerLng = (minLng + maxLng) / 2;
     return {
-        latitude:  centerLat,
+        latitude: centerLat,
         longitude: centerLng,
         latitudeDelta: (maxLat - centerLat) * 2.2,
         longitudeDelta: (maxLng - centerLng) * 2.2,
@@ -48,6 +54,7 @@ const calculateMapView = (routes) => {
 }
 
 export const screenReducer = (state = INITIAL_STATE, action) => {
+    console.log(action.type + " with: " + action.payload + " at: " + new Date().toLocaleTimeString())
     switch (action.type) {
         case CLEAR_SELECTION:
             return {
@@ -78,6 +85,11 @@ export const screenReducer = (state = INITIAL_STATE, action) => {
             return {
                 ...state,
                 mapView: calculateMapView(action.payload)
+            }
+        case SET_MAP_VIEW_WITH_COORDS:
+            return {
+                ...state,
+                mapView: action.payload
             }
         case SET_ROUTE_PLUS_HOURS:
             return {
@@ -115,6 +127,16 @@ export const screenReducer = (state = INITIAL_STATE, action) => {
             return {
                 ...state,
                 units: action.payload
+            }
+        case LOGIN:
+            return {
+                ...state,
+                email: action.payload
+            }
+        case LOGOUT:
+            return {
+                ...state,
+                email: ''
             }
         default:
             return state

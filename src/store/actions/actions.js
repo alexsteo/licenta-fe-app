@@ -5,11 +5,14 @@ import {
     DELETE_FROM_FAVOURITE,
     HIDE_MODAL,
     HIDE_WEATHER_INFO_SCREEN,
+    LOGIN,
+    LOGOUT,
     RESOLVE_ROUTE_CALL,
     SET_CURRENT_WEATHER,
     SET_FAVOUIRITES,
     SET_LANGUAGE,
     SET_MAP_VIEW,
+    SET_MAP_VIEW_WITH_COORDS,
     SET_MODAL_SCREEN,
     SET_NIGHT_MODE,
     SET_REPORTS,
@@ -117,6 +120,13 @@ export const setMapView = (routes) => {
     };
 };
 
+export const setMapViewWithCoords = (mapview) => {
+    return {
+        type: SET_MAP_VIEW_WITH_COORDS,
+        payload: mapview
+    };
+};
+
 export const setRoutePlusHours = (plusHours) => {
     return {
         type: SET_ROUTE_PLUS_HOURS,
@@ -163,4 +173,17 @@ export const setLanguage = (language) => {
         type: SET_LANGUAGE,
         payload: language
     }
-}
+};
+
+export const login = (email) => {
+    return {
+        type: LOGIN,
+        payload: email
+    }
+};
+
+export const logout = () => {
+    return {
+        type: LOGOUT
+    }
+};

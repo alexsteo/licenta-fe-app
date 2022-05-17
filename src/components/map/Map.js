@@ -2,7 +2,7 @@ import React, {useEffect} from 'react';
 import MapView, {Marker, Polyline, PROVIDER_GOOGLE} from "react-native-maps";
 import {Dimensions, StyleSheet, View} from "react-native";
 import {useDispatch, useSelector} from "react-redux";
-import {setMapView, setWeatherInfoScreenType, showWeatherInfoScreen} from "../../store/actions/actions";
+import {setMapViewWithCoords, setWeatherInfoScreenType, showWeatherInfoScreen} from "../../store/actions/actions";
 import {MapStyles} from "../common/mapStyles";
 import GetLocation from "react-native-get-location";
 
@@ -24,7 +24,6 @@ export const Map = ({navToLocFunc, rotateToNorthFunc}) => {
 
     useEffect(() => {
         changeMapToMapView();
-        navToLocation();
         rotateToNorthFunc.current = pointToTheNorth;
         navToLocFunc.current = navToLocation;
     }, [mapView]);
@@ -68,19 +67,20 @@ export const Map = ({navToLocFunc, rotateToNorthFunc}) => {
 
     const addRoutes = (routes) => {
         if (!routes || searchType !== 'navigation') return null;
-        return routes.sort((left, right) => left.score * 5 + left.length - right.score * 5 - right.length)
-            .map(each => {
-                return <Polyline
-                    coordinates={each.route}
-                    strokeColor={getColor()}
-                    strokeWidth={6}
-                    tappable={true}
-                    onPress={() => {
-                        const {route, ...routeData} = each;
-                        openWeatherScreen(routeData, 'route');
-                    }}
-                />;
-            });
+        routes = routes.sort((left, right) => right.score * 5 + right.length - left.score * 5 - left.length)
+        return routes.map(each => {
+            return <Polyline
+                coordinates={each.route}
+                strokeColor={getColor()}
+                strokeWidth={6}
+                tappable={true}
+                onPress={() => {
+                    let {route, ...routeData} = each;
+                    routeData = {...routeData, no: routes.indexOf(each), finalScore: each.score * 5 + each.length, total: route.length};
+                    openWeatherScreen(routeData, 'route');
+                }}
+            />;
+        });
     }
 
     const addWeatherOnRoutes = (weatherOnRoutes, routePlusHours) => {
@@ -161,18 +161,13 @@ export const Map = ({navToLocFunc, rotateToNorthFunc}) => {
                 latitudeDelta: 3,
                 longitudeDelta: 3,
             }
-            mapComponent.animateToRegion(region);
+            dispatch(setMapViewWithCoords(region));
         })
     }
 
     const pointToTheNorth = () => {
         mapComponent.animateCamera({
-            center: {
-                latitude: mapView.latitude,
-                longitude: mapView.longitude
-            },
-            pitch: 0,
-            zoom: 5
+            heading: 0
         })
     }
 

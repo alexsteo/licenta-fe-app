@@ -1,16 +1,16 @@
 import * as React from 'react';
-import {Modal, Portal, Provider, Text} from 'react-native-paper';
+import {Modal, Portal, Provider} from 'react-native-paper';
 import {useDispatch, useSelector} from "react-redux";
 import {hideModal, setModalScreen} from "../../store/actions/actions";
 import {MainModal} from "./mainModal";
 import {ReportModal} from "./reportModal";
 import {FavouriteModal} from "./favouriteModal";
 import {SettingsModal} from "./settingsModal";
-import {View} from "react-native";
+import {Appearance, Text, View} from "react-native";
 
 const style = {
     containerStyle: {
-        backgroundColor: 'white',
+        backgroundColor: Appearance.getColorScheme() === 'dark' ? '#121212' : 'white',
         padding: 20,
         paddingTop: 0
     },

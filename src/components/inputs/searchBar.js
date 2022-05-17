@@ -11,6 +11,10 @@ export const SearchBar = ({searchPlaceHolder, searchMethod}) => {
     const [showSuggestions, setShowSuggestions] = useState(false);
 
     const modalIsOpen = useSelector(state => state.screen.showModal);
+    const userEmail = useSelector(state => state.screen.email);
+
+    const loggedInImage = require('../../res/profile.png');
+    const anonImage = require('../../res/anon.png');
 
     const dispatch = useDispatch();
 
@@ -123,7 +127,7 @@ export const SearchBar = ({searchPlaceHolder, searchMethod}) => {
                     />
                     <TouchableRipple style={searchStyle.rippleStyle} onPress={() => toggleModal()}
                                      mode="contained" title="aaa">
-                        <Avatar.Image size={50} source={require('../../res/profile.png')}/>
+                        <Avatar.Image size={50} source={!!userEmail && userEmail !== '' ? loggedInImage : anonImage}/>
                     </TouchableRipple>
                 </View>
                 {getSuggestions()}

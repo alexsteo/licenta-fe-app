@@ -14,10 +14,8 @@ export const getDirections = (searchTerm, dispatch) => {
         timeout: 15000,
     })
         .then(loc => {
-            // let url = `http://10.0.2.2:8080/route/${loc.latitude},${loc.longitude}/${searchTerm.lat},${searchTerm.lng}`
-            // let url = `http://10.0.2.2:8080/route/oradea/iasi`
-            // console.log(url)
             let url = `http://10.0.2.2:3000/fe`
+            // let url = `https://licenta-backend-teo.herokuapp.com/route/set`
             fetch(url)
                 .then(res => res.json())
                 .then(data => {

@@ -1,10 +1,13 @@
 import * as React from 'react';
-import {Avatar, Button, List, ToggleButton, TouchableRipple} from 'react-native-paper';
+import {useEffect, useState} from 'react';
+import {Avatar, Button, TextInput, ToggleButton, TouchableRipple} from 'react-native-paper';
 import {useDispatch, useSelector} from "react-redux";
-import {setLanguage, setModalScreen, setNightMode, setUnits} from "../../store/actions/actions";
+import {login, logout, setLanguage, setModalScreen, setNightMode, setUnits} from "../../store/actions/actions";
 import {View} from "react-native";
 import {getLanguageTranslations} from "../common/languages/languageSelector";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import auth from "@react-native-firebase/auth";
+import {GoogleSignin} from "@react-native-google-signin/google-signin";
 
 const style = {
     langView: {
@@ -16,7 +19,13 @@ const style = {
     },
     notSelected: {
         color: '#0000'
-    }
+    },
+    loginButtonStyle: {
+        flexDirection: 'row',
+        width: '100%'
+    },
+    accountButtonsStyle: {},
+    accountView: {}
 }
 
 const langs = ['en', 'ro'];
@@ -34,6 +43,9 @@ const languageImages = {
     }
 }
 
+GoogleSignin.configure({
+    webClientId: "943316841319-l2mg8bl09aq9m3a65e62b9iu7em1i6s3.apps.googleusercontent.com",
+});
 
 export const SettingsModal = () => {
     const dispatch = useDispatch();
@@ -41,11 +53,16 @@ export const SettingsModal = () => {
     const nightMode = useSelector(state => state.screen.nightMode);
     const language = useSelector(state => state.screen.language);
     const units = useSelector(state => state.screen.units);
+    const userEmail = useSelector(state => state.screen.email);
     const translations = getLanguageTranslations(language);
 
-    const calculateButtonTitle = () => {
-        return nightMode ? translations.switchLightMode : translations.switchNightMode;
-    }
+    const [email, setEmail] = useState('');
+    const [pass, setPass] = useState('');
+    const [confirmPass, setConfirmPass] = useState('');
+    const [accountState, setAccountState] = useState('main');
+
+    useEffect(() => {
+    }, []);
 
     const toggleNightMode = async () => {
         await AsyncStorage.setItem('nightMode', !nightMode ? 'on' : 'off');
@@ -64,7 +81,6 @@ export const SettingsModal = () => {
 
     const getLanguageImages = () => {
         return langs.map(lang => {
-
                 const image = lang === language ?
                     Object.entries(languageImages.selected).filter(entry => entry[0] === lang)[0][1] :
                     Object.entries(languageImages.normal).filter(entry => entry[0] === lang)[0][1];
@@ -77,14 +93,187 @@ export const SettingsModal = () => {
         )
     }
 
+    const mainButtons = () => {
+        return (
+            <View style={style.loginButtonStyle}>
+                <Button mode="contained" title="Sign up" onPress={() => setAccountState('sign-up')}>
+                    Sign up
+                </Button>
+                <Button
+                    mode="contained"
+                    title="Sign in"
+                    icon="email"
+                    onPress={() => setAccountState('sign-in')}/>
+                <Button
+                    mode="contained"
+                    title="Google Sign-In"
+                    icon="google"
+                    onPress={() => onGoogleButtonPress()}/>
+            </View>
+        )
+    }
+
+    const signInButtons = () => {
+        return (
+            <View>
+                <Button
+                    key={1}
+                    onPress={() => dispatch(setModalScreen('main'))}
+                    icon="arrow-left-thick"
+                > Back </Button>
+                <TextInput
+                    label="Email"
+                    value={email}
+                    onChangeText={text => setEmail(text)}>
+                </TextInput>
+                <TextInput
+                    label="Password"
+                    value={pass}
+                    onChangeText={text => setPass(text)}>
+                </TextInput>
+                <Button type="contained" onPress={() => signIn()}>Login</Button>
+                <Button type="contained" onPress={() => setAccountState('forgot')}>Forgot Password</Button>
+            </View>
+        )
+    }
+
+    const forgotButtons = () => {
+        return (
+            <View>
+                <Button
+                    key={1}
+                    onPress={() => dispatch(setModalScreen('main'))}
+                    icon="arrow-left-thick"
+                > Back </Button>
+                <TextInput
+                    label="Email"
+                    value={email}
+                    onChangeText={text => setEmail(text)}>
+                </TextInput>
+                <Button type="contained" onPress={() => forgotPassword()}>Send reset email</Button>
+            </View>
+        )
+    }
+
+    const signUpButtons = () => {
+        return (
+            <View>
+                <Button
+                    key={1}
+                    onPress={() => dispatch(setModalScreen('main'))}
+                    icon="arrow-left-thick"
+                > Back </Button>
+                <TextInput
+                    label="Email"
+                    value={email}
+                    onChangeText={text => setEmail(text)}>
+                </TextInput>
+                <TextInput
+                    label="Password"
+                    value={pass}
+                    onChangeText={text => setPass(text)}>
+                </TextInput>
+                <TextInput
+                    label="Confirm Password"
+                    value={confirmPass}
+                    onChangeText={text => setConfirmPass(text)}>
+                </TextInput>
+                <Button onPress={() => signUp()}>Login</Button>
+            </View>
+        )
+    }
+
+    const logoutButtons = () => {
+        return (
+            <Button mode="contained" title="Sign out" onPress={() => signOut()}>
+                Sign out
+            </Button>
+        )
+    }
+
+    const getAccountView = () => {
+        if (!!userEmail && userEmail !== '') {
+            return logoutButtons();
+        } else {
+            switch (accountState) {
+                case 'main':
+                    return mainButtons();
+                case 'sign-in':
+                    return signInButtons();
+                case 'sign-up':
+                    return signUpButtons();
+                case 'forgot':
+                    return forgotButtons();
+                default:
+                    return mainButtons();
+            }
+        }
+    }
+
+    const forgotPassword = () => {
+        auth().sendPasswordResetEmail(email).then(() => {
+        });
+        setAccountState('main')
+    }
+
+    const signOut = () => {
+        auth().signOut().then(() => {
+        })
+        auth().onAuthStateChanged((user) => {
+            if (!user) {
+                dispatch(logout());
+            }
+        })
+    }
+
+    const signUp = () => {
+        if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email) && pass === confirmPass) {
+            auth()
+                .createUserWithEmailAndPassword(email, pass)
+                .then((userCred) => {
+                    dispatch(login(userCred.user.email))
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+        } else {
+            return;
+        }
+    }
+
+    const signIn = () => {
+        auth()
+            .signInWithEmailAndPassword(email, pass)
+            .then((userCred) => dispatch(login(userCred.user.email)))
+            .catch(error => console.log(error))
+    }
+
+    async function onGoogleButtonPress() {
+        try {
+            await GoogleSignin.hasPlayServices({showPlayServicesUpdateDialog: true}); // <-- Add this
+            const {idToken} = await GoogleSignin.signIn();
+            const googleCredential = auth.GoogleAuthProvider.credential(idToken);
+            await auth().signInWithCredential(googleCredential);
+        } catch (error) {
+            console.log(error.message);
+        }
+        auth().onAuthStateChanged((user) => {
+            if (!user) {
+                dispatch(logout());
+            } else {
+                dispatch(login(user.email))
+            }
+        })
+    }
+
     return [
-        <List.Item
+        <Button
             key={1}
             onPress={() => dispatch(setModalScreen('main'))}
-            left={props => <List.Icon {...props} icon="arrow-left-thick"/>}
-        />,
+            icon="arrow-left-thick"
+        > Back </Button>,
         <Button icon="camera" mode="contained" onPress={() => toggleNightMode()}>
-            {calculateButtonTitle()}
+            {nightMode ? translations.switchLightMode : translations.switchNightMode}
         </Button>,
         <View style={style.langView}>
             {getLanguageImages()}
@@ -93,5 +282,8 @@ export const SettingsModal = () => {
             <ToggleButton icon="ruler" value="metric"/>
             <ToggleButton icon="crown-outline" value="imperial"/>
         </ToggleButton.Row>,
+        <View style={style.accountView}>
+            {getAccountView()}
+        </View>
     ]
 };

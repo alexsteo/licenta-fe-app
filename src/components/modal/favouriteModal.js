@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {useEffect, useState} from 'react';
-import {Button, List, Searchbar} from 'react-native-paper';
-import {useDispatch} from "react-redux";
+import {Button, List, Searchbar, Text} from 'react-native-paper';
+import {useDispatch, useSelector} from "react-redux";
 import {setModalScreen} from "../../store/actions/actions";
 import {cities} from "../../res/cityList";
 import {Keyboard, View} from "react-native";
@@ -22,8 +22,10 @@ export const FavouriteModal = () => {
 
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedLocation, setSelectedLocation] = useState({});
-
     const [showSuggestions, setShowSuggestions] = useState(false);
+
+    const userEmail = useSelector(state => state.screen.email);
+
     useEffect(() => {
         const showSubscription = Keyboard.addListener("keyboardDidShow", () => {
             setShowSuggestions(true);
@@ -89,27 +91,42 @@ export const FavouriteModal = () => {
             </View>
     }
 
-    return [
-        <List.Item
-            key={1}
-            onPress={() => dispatch(setModalScreen('main'))}
-            left={props => <List.Icon {...props} icon="arrow-left-thick"/>}
-        />,
-        <List.Item
-            key={2}
-            title="Add a location to your favourites"
-        />,
-        <Searchbar
-            key = {3}
-            placeholder="Search"
-            onChangeText={setSearchTerm}
-            value={searchTerm}
-        />,
-        <View key={4}>
-            {getSuggestions()}
-        </View>,
-        <Button icon="camera" mode="contained" onPress={() => setFavourite(selectedLocation)} key={5}>
-            Add To Favorites
-        </Button>
-    ]
+    const getScreen = () => {
+        if (!!userEmail && userEmail !== '') {
+            return [
+                <Button
+                    key={1}
+                    onPress={() => dispatch(setModalScreen('main'))}
+                    icon="arrow-left-thick"
+                > Back </Button>,
+                <Text
+                    key={2}
+                    title="Add a location to your favourites"
+                > Add a location to your favourites </Text>,
+                <Searchbar
+                    key={3}
+                    placeholder="Search"
+                    onChangeText={setSearchTerm}
+                    value={searchTerm}
+                />,
+                <View key={4}>
+                    {getSuggestions()}
+                </View>,
+                <Button icon="camera" mode="contained" onPress={() => setFavourite(selectedLocation)} key={5}>
+                    Add To Favorites
+                </Button>
+            ]
+        } else {
+            return [
+                <Button
+                    key={1}
+                    onPress={() => dispatch(setModalScreen('main'))}
+                    icon="arrow-left-thick"
+                > Back </Button>,
+                <Text>Please Login to add to your favourites!</Text>
+            ]
+        }
+    }
+
+    return getScreen();
 };
