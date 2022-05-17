@@ -10,7 +10,7 @@ export const ReportModal = () => {
 
     const [type, setType] = useState("");
 
-    const userEmail = useSelector(state => state.screen.email);
+    const userEmail = useSelector(state => state.user.email);
 
     const reportProblem = (type) => {
         submitReport(type, dispatch);

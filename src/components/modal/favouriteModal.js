@@ -24,7 +24,7 @@ export const FavouriteModal = () => {
     const [selectedLocation, setSelectedLocation] = useState({});
     const [showSuggestions, setShowSuggestions] = useState(false);
 
-    const userEmail = useSelector(state => state.screen.email);
+    const userEmail = useSelector(state => state.user.email);
 
     useEffect(() => {
         const showSubscription = Keyboard.addListener("keyboardDidShow", () => {

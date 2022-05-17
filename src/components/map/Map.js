@@ -16,7 +16,7 @@ export const Map = ({navToLocFunc, rotateToNorthFunc}) => {
     const favourites = useSelector(state => state.nav.favourites);
     const mapView = useSelector(state => state.screen.mapView);
     const routePlusHours = useSelector(state => state.screen.routePlusHours);
-    const nightMode = useSelector(state => state.screen.nightMode);
+    const nightMode = useSelector(state => state.user.nightMode);
 
     const dispatch = useDispatch();
 

@@ -11,7 +11,7 @@ export const SearchBar = ({searchPlaceHolder, searchMethod}) => {
     const [showSuggestions, setShowSuggestions] = useState(false);
 
     const modalIsOpen = useSelector(state => state.screen.showModal);
-    const userEmail = useSelector(state => state.screen.email);
+    const userEmail = useSelector(state => state.user.email);
 
     const loggedInImage = require('../../res/profile.png');
     const anonImage = require('../../res/anon.png');

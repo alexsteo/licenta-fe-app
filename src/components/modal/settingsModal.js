@@ -50,10 +50,10 @@ GoogleSignin.configure({
 export const SettingsModal = () => {
     const dispatch = useDispatch();
 
-    const nightMode = useSelector(state => state.screen.nightMode);
-    const language = useSelector(state => state.screen.language);
-    const units = useSelector(state => state.screen.units);
-    const userEmail = useSelector(state => state.screen.email);
+    const nightMode = useSelector(state => state.user.nightMode);
+    const language = useSelector(state => state.user.language);
+    const units = useSelector(state => state.user.units);
+    const userEmail = useSelector(state => state.user.email);
     const translations = getLanguageTranslations(language);
 
     const [email, setEmail] = useState('');

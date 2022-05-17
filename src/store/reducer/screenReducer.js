@@ -2,16 +2,11 @@ import {
     CLEAR_SELECTION,
     HIDE_MODAL,
     HIDE_WEATHER_INFO_SCREEN,
-    LOGIN,
-    LOGOUT,
-    SET_LANGUAGE,
     SET_MAP_VIEW,
     SET_MAP_VIEW_WITH_COORDS,
     SET_MODAL_SCREEN,
-    SET_NIGHT_MODE,
     SET_ROUTE_PLUS_HOURS,
     SET_SEARCH_TYPE,
-    SET_UNITS,
     SET_WEATHER_INFO_SCREEN_TYPE,
     SHOW_MODAL,
     SHOW_WEATHER_INFO_SCREEN,
@@ -112,31 +107,6 @@ export const screenReducer = (state = INITIAL_STATE, action) => {
             return {
                 ...state,
                 weatherInfoScreenType: action.payload
-            }
-        case SET_NIGHT_MODE:
-            return {
-                ...state,
-                nightMode: action.payload
-            }
-        case SET_LANGUAGE:
-            return {
-                ...state,
-                language: action.payload
-            }
-        case SET_UNITS:
-            return {
-                ...state,
-                units: action.payload
-            }
-        case LOGIN:
-            return {
-                ...state,
-                email: action.payload
-            }
-        case LOGOUT:
-            return {
-                ...state,
-                email: ''
             }
         default:
             return state

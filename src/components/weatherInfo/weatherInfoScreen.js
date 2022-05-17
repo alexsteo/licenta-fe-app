@@ -13,8 +13,8 @@ const WeatherInfoScreen = () => {
     const weatherInfoScreenType = useSelector(state => state.screen.weatherInfoScreenType);
     const showWeatherInfoScreen = useSelector(state => state.screen.showWeatherInfoScreen);
 
-    const units = useSelector(state => state.screen.units);
-    const language = useSelector(state => state.screen.language);
+    const units = useSelector(state => state.user.units);
+    const language = useSelector(state => state.user.language);
 
     const callDeleteFavourite = () => {
         deleteFavourite(data.city, dispatch);

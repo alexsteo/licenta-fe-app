@@ -1,14 +1,16 @@
 import {combineReducers} from "redux";
 import {
-    ADD_REPORT, ADD_TO_FAVOURITES, DELETE_FROM_FAVOURITE, RESOLVE_ROUTE_CALL,
+    ADD_REPORT,
+    ADD_TO_FAVOURITES,
+    DELETE_FROM_FAVOURITE,
+    RESOLVE_ROUTE_CALL,
     SET_CURRENT_WEATHER,
-    SET_DIRECTIONS,
     SET_FAVOUIRITES,
-    SET_REPORTS, SET_ROUTE_PLUS_HOURS,
+    SET_REPORTS,
     SET_SEARCHED_FOR
 } from "../actions/types";
 import {screenReducer} from "./screenReducer";
-import {act} from "react-test-renderer";
+import {userReducer} from "./userReducer";
 
 const INITIAL_STATE = {
     routes: [],
@@ -75,4 +77,5 @@ const navReducer = (state = INITIAL_STATE, action) => {
 export default combineReducers({
     nav: navReducer,
     screen: screenReducer,
+    user: userReducer
 });
