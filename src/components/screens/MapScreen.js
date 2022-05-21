@@ -6,54 +6,21 @@ import {WeatherSearch} from "../inputs/weatherSearch";
 import {Navigator} from "../inputs/navigator";
 import {useDispatch, useSelector} from "react-redux";
 import ModalSettings from "../modal/modalSettings";
-import {Slider} from "@miblanchard/react-native-slider";
-import {setRoutePlusHours} from "../../store/actions/actions";
 import WeatherInfoScreen from "../weatherInfo/weatherInfoScreen";
-import {Avatar, TouchableRipple} from "react-native-paper";
+import {Avatar, Text, TouchableRipple} from "react-native-paper";
+import {SliderComponent} from "../map/slider";
 
 export const MapScreen = () => {
 
     const searchType = useSelector(state => state.screen.searchType);
-    const plusHours = useSelector(state => state.screen.routePlusHours);
     const showWeatherInfoScreen = useSelector(state => state.screen.showWeatherInfoScreen);
     const weatherInfoScreenData = useSelector(state => state.screen.weatherInfoScreenData);
+    const plusHours = useSelector(state => state.screen.routePlusHours);
 
     const rotateToNorthFunc = useRef(null);
     const navToLocFunc = useRef(null);
 
     const dispatch = useDispatch();
-
-    const style = {
-        view: {
-            height: Dimensions.get('window').height
-        },
-        searchBar: {
-            position: 'absolute',
-            left: 0,
-            width: Dimensions.get('window').width,
-        },
-        navigatorStyle: {
-            marginTop: 100
-        },
-        sliderStyle: {
-            position: 'absolute',
-            top: Dimensions.get('window').height - 170,
-            left: Dimensions.get('window').width * 0.1,
-            width: Dimensions.get('window').width * 0.8,
-        },
-        weatherInfoStyle: {
-            backgroundColor: 'white',
-            padding: 20
-        },
-        buttonViewStyle: {
-            position: 'absolute',
-            top: Dimensions.get('window').height - 275,
-            left: Dimensions.get('window').width * 0.87,
-        },
-        buttonStyle: {
-            marginTop: 10
-        }
-    }
 
     const getSearchType = (key) => {
         switch (key) {
@@ -69,11 +36,14 @@ export const MapScreen = () => {
     }
 
     const getSliderIfNeeded = () => {
-        return (searchType === "navigation" || searchType === "weather") && <Slider
-            value={plusHours}
-            onValueChange={value => dispatch(setRoutePlusHours(value[0]))}
-            maximumValue={23}
-            step={1}/>
+        return (searchType === "navigation" || searchType === "weather") && <SliderComponent/>
+    }
+
+    const getPlusHoursText = () => {
+        const current = new Date();
+        const time = (current.getHours() + plusHours) % 24;
+        const day = (current.getHours() + plusHours) / 24 ? 'tomorrow' : 'today';
+        return `Weather data is for ${day} at ${time} o'clock`
     }
 
     return (
@@ -84,16 +54,19 @@ export const MapScreen = () => {
                     {getSliderIfNeeded()}
                 </View>
                 {getSearchType(searchType)}
+                <View style={style.plusHoursViewStyle}>
+                    <Text style={style.plusHoursTextStyle}>{getPlusHoursText()}</Text>
+                </View>
                 <View style={style.buttonViewStyle}>
                     <TouchableRipple style={style.buttonStyle} onPress={() => navToLocFunc.current()}
-                        mode="contained" title="lang">
+                                     mode="contained" title="lang">
                         <Avatar.Image size={40}
-                            source={require('../../res/location.png')}/>
+                                      source={require('../../res/location.png')}/>
                     </TouchableRipple>
                     <TouchableRipple style={style.buttonStyle} onPress={() => rotateToNorthFunc.current()}
-                        mode="contained" title="lang">
+                                     mode="contained" title="lang">
                         <Avatar.Image size={40}
-                            source={require('../../res/north.png')}/>
+                                      source={require('../../res/north.png')}/>
                     </TouchableRipple>
                 </View>
                 <View
@@ -108,4 +81,51 @@ export const MapScreen = () => {
             </View>
         </View>
     )
+}
+
+const style = {
+    view: {
+        height: Dimensions.get('window').height
+    },
+    searchBar: {
+        position: 'absolute',
+        left: 0,
+        width: Dimensions.get('window').width,
+    },
+    navigatorStyle: {
+        marginTop: 100
+    },
+    sliderStyle: {
+        position: 'absolute',
+        top: Dimensions.get('window').height - 170,
+        left: Dimensions.get('window').width * 0.1,
+        width: Dimensions.get('window').width * 0.8,
+    },
+    weatherInfoStyle: {
+        backgroundColor: 'white',
+        padding: 20
+    },
+    buttonViewStyle: {
+        position: 'absolute',
+        top: Dimensions.get('window').height - 275,
+        left: Dimensions.get('window').width * 0.87,
+    },
+    plusHoursViewStyle: {
+        position: 'absolute',
+        top: 80,
+        left: Dimensions.get('window').width * 0.05,
+        width: Dimensions.get('window').width * 0.9,
+        backgroundColor: '#ababab',
+        paddingTop: 10,
+        paddingBottom: 10,
+        borderRadius: 10,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    plusHoursTextStyle: {
+        fontSize: 18,
+    },
+    buttonStyle: {
+        marginTop: 10
+    }
 }

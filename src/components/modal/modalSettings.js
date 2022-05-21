@@ -6,13 +6,16 @@ import {MainModal} from "./mainModal";
 import {ReportModal} from "./reportModal";
 import {FavouriteModal} from "./favouriteModal";
 import {SettingsModal} from "./settingsModal";
-import {Appearance, Text, View} from "react-native";
+import {Appearance, ScrollView, View} from "react-native";
+import {getLanguageTranslations} from "../common/languages/languageSelector";
 
 const style = {
     containerStyle: {
         backgroundColor: Appearance.getColorScheme() === 'dark' ? '#121212' : 'white',
         padding: 20,
-        paddingTop: 0
+        paddingTop: 0,
+        borderRadius: 20,
+        borderWidth: 0,
     },
     modalStyle: {
         position: 'absolute',
@@ -31,6 +34,8 @@ const ModalSettings = () => {
 
     const visible = useSelector(state => state.screen.showModal);
     const screen = useSelector(state => state.screen.modalScreen);
+    const language = useSelector(state => state.user.language);
+    const translations = getLanguageTranslations(language);
 
     const chooseModalScreen = (screen) => {
         switch (screen) {
@@ -60,8 +65,9 @@ const ModalSettings = () => {
                     contentContainerStyle={style.containerStyle}
                 >
                     <View style={style.modalViewStyle}>
-                        <Text>Replace me with a logo</Text>
-                        {chooseModalScreen(screen)}
+                        <ScrollView>
+                            {chooseModalScreen(screen)}
+                        </ScrollView>
                     </View>
                 </Modal>
             </Portal>

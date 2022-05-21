@@ -5,6 +5,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {setMapViewWithCoords, setWeatherInfoScreenType, showWeatherInfoScreen} from "../../store/actions/actions";
 import {MapStyles} from "../common/mapStyles";
 import GetLocation from "react-native-get-location";
+import {isNightMode} from "../common/nightModeSlector";
 
 export const Map = ({navToLocFunc, rotateToNorthFunc}) => {
 
@@ -76,7 +77,12 @@ export const Map = ({navToLocFunc, rotateToNorthFunc}) => {
                 tappable={true}
                 onPress={() => {
                     let {route, ...routeData} = each;
-                    routeData = {...routeData, no: routes.indexOf(each), finalScore: each.score * 5 + each.length, total: route.length};
+                    routeData = {
+                        ...routeData,
+                        no: routes.indexOf(each),
+                        finalScore: each.score * 5 + each.length,
+                        total: routes.length
+                    };
                     openWeatherScreen(routeData, 'route');
                 }}
             />;
@@ -179,7 +185,7 @@ export const Map = ({navToLocFunc, rotateToNorthFunc}) => {
             provider={PROVIDER_GOOGLE}
             style={backgroundStyle.map}
             initialRegion={mapView}
-            customMapStyle={nightMode ? MapStyles.nightMode : MapStyles.lightMode}>
+            customMapStyle={isNightMode(nightMode) ? MapStyles.lightMode : MapStyles.nightMode}>
             {addRoutes(routes)}
             {addWeatherData(currentWeather)}
             {addReports(reports)}

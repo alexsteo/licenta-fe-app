@@ -16,7 +16,7 @@ export const MainScreen = () => {
         const nightMode = await AsyncStorage.getItem('nightMode');
         const lang = await AsyncStorage.getItem('lang');
         const units = await AsyncStorage.getItem('units');
-        dispatch(setNightMode(nightMode === 'on'));
+        dispatch(setNightMode(nightMode));
         dispatch(setLanguage(lang));
         dispatch(setUnits(units));
     }

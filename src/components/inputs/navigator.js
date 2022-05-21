@@ -1,13 +1,17 @@
 import React, {useState} from "react";
 import {View} from "react-native";
 import {BottomMenu, Item} from "react-native-bottom-menu";
-import {useDispatch} from "react-redux";
-import {clearSelection, setSearchType} from "../../store/actions/actions";
+import {useDispatch, useSelector} from "react-redux";
+import {setSearchType} from "../../store/actions/actions";
+import {getLanguageTranslations} from "../common/languages/languageSelector";
 
 export const Navigator = (props) => {
 
     const [screen, setScreen] = useState("navigation");
     const dispatch = useDispatch();
+
+    const language = useSelector(state => state.user.language);
+    const translations = getLanguageTranslations(language);
 
     const style = {
         height: "100%"
@@ -24,7 +28,7 @@ export const Navigator = (props) => {
                 <Item
                     size={22}
                     name="navigation"
-                    text="Navigation"
+                    text={translations.navigatorNavigation}
                     type="Feather"
                     isActive={screen === "navigation"}
                     onPress={() => onMenuItemPress("navigation")}
@@ -32,7 +36,7 @@ export const Navigator = (props) => {
                 <Item
                     size={22}
                     type="Feather"
-                    text="Weather"
+                    text={translations.navigatorWeather}
                     name="sun"
                     isActive={screen === "weather"}
                     onPress={() => onMenuItemPress("weather")}
@@ -40,7 +44,7 @@ export const Navigator = (props) => {
                 <Item
                     size={30}
                     name="star"
-                    text="Favourites"
+                    text={translations.navigatorFavourites}
                     type="Feather"
                     isActive={screen === "favourites"}
                     onPress={() => onMenuItemPress("favourites")}

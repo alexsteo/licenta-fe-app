@@ -3,8 +3,27 @@ import {Button, Modal, Portal, Provider} from 'react-native-paper';
 import {useDispatch, useSelector} from "react-redux";
 import {hideWeatherInfoScreen} from "../../store/actions/actions";
 import {deleteFavourite} from "../common/apiMethods";
-import {Text, View} from "react-native";
+import {Appearance, Text, View} from "react-native";
 import {cities} from "../../res/cityList";
+import {getLanguageTranslations} from "../common/languages/languageSelector";
+
+const format = (toFormat, ...values) => {
+    console.log(toFormat)
+    for (let value of values) {
+        toFormat = toFormat.replace("{/}", value);
+    }
+    return toFormat.toString();
+}
+
+const getMeasurementValue = (value, units, type) => {
+    if (units === 'metric') return value;
+    switch (type) {
+        case 'length':
+            return 0.621371192 * value;
+        case 'temperature':
+            return 1.8 * value + 32;
+    }
+}
 
 const WeatherInfoScreen = () => {
     const dispatch = useDispatch();
@@ -15,19 +34,18 @@ const WeatherInfoScreen = () => {
 
     const units = useSelector(state => state.user.units);
     const language = useSelector(state => state.user.language);
+    const userEmail = useSelector(state => state.user.email);
+    const translations = getLanguageTranslations(language);
 
     const callDeleteFavourite = () => {
-        deleteFavourite(data.city, dispatch);
+        deleteFavourite(data.city, dispatch, userEmail);
     }
 
     const routeData = () => {
         return (
             <View>
                 <Text>
-                    {`Selected route is ${data.length} km long\n`}
-                    {`The score is ${data.score}\n`}
-                    {`The computed score is ${data.finalScore}\n`}
-                    {`Making it the ${data.no} out of the ${data.total} routes\n`}
+                    {format(translations.weatherInfoRoute, getMeasurementValue(data.length, units, 'length'), data.score, data.finalScore, data.no, data.total)}
                 </Text>
             </View>
         )
@@ -37,11 +55,7 @@ const WeatherInfoScreen = () => {
         return (
             <View style={style.modalViewStyle}>
                 <Text>
-                    {`Weather in ${data.city}:\n`}
-                    {`Temperature is ${data.temperature} C\n`}
-                    {`Rain is ${data.rain} mm\n`}
-                    {`Snow is ${data.snow} mm\n`}
-                    {`Clouds is ${data.clouds} %\n`}
+                    {format(translations.weatherInfoForecast, data.location, getMeasurementValue(data.temperature, units, 'temperature'), data.rain, data.snow, data.clouds)}
                 </Text>
                 <Button onPress={() => {
                     callDeleteFavourite()
@@ -56,11 +70,7 @@ const WeatherInfoScreen = () => {
         return (
             <View style={style.modalViewStyle}>
                 <Text>
-                    {`Weather in ${data.city}:\n`}
-                    {`Temperature is ${data.temperature} C\n`}
-                    {`Rain is ${data.rain} mm\n`}
-                    {`Snow is ${data.snow} mm\n`}
-                    {`Clouds is ${data.clouds} %\n`}
+                    {format(translations.weatherInfoForecast, data.location, getMeasurementValue(data.temperature, units, 'temperature'), data.rain, data.snow, data.clouds)}
                 </Text>
             </View>
         )
@@ -70,11 +80,7 @@ const WeatherInfoScreen = () => {
         return (
             <View style={style.modalViewStyle}>
                 <Text>
-                    {`Weather in ${data.city}:\n`}
-                    {`Temperature is ${data.temperature} C\n`}
-                    {`Rain is ${data.rain} mm\n`}
-                    {`Snow is ${data.snow} mm\n`}
-                    {`Clouds is ${data.clouds} %\n`}
+                    {format(translations.weatherInfoForecast, data.location, getMeasurementValue(data.temperature, units, 'temperature'), data.rain, data.snow, data.clouds)}
                 </Text>
             </View>
         )
@@ -96,12 +102,12 @@ const WeatherInfoScreen = () => {
         return (
             <View style={style.modalViewStyle}>
                 <Text>
-                    {`Report near ${getClosestCity(data).AccentCity}:\n`}
-                    { !!data && !!data.typeAndAmount && !!data.typeAndAmount.TRAFFIC ? `There are ${data.typeAndAmount.TRAFFIC} reports of traffic in the area\n` : ''}
-                    { !!data && !!data.typeAndAmount && !!data.typeAndAmount.FOG ? `There are ${data.typeAndAmount.FOG} reports of fog in the area\n` : ''}
-                    { !!data && !!data.typeAndAmount && !!data.typeAndAmount.HEAVY_RAIN ? `There are ${data.typeAndAmount.HEAVY_RAIN} reports of heavy rain in the area\n` : ''}
-                    { !!data && !!data.typeAndAmount && !!data.typeAndAmount.SNOW ? `There are ${data.typeAndAmount.SNOW} reports of snow in the area\n` : ''}
-                    { !!data && !!data.typeAndAmount && !!data.typeAndAmount.ROAD_ACCIDENT ? `There are ${data.typeAndAmount.ROAD_ACCIDENT} reports of accidents in the area\n` : ''}
+                    {format(translations.weatherInfoReportsTitle, getClosestCity(data).AccentCity)}
+                    { !!data && !!data.typeAndAmount && !!data.typeAndAmount.FOG ? format(translations.weatherInfoReportsFog, data.typeAndAmount.FOG) : ''}
+                    { !!data && !!data.typeAndAmount && !!data.typeAndAmount.HEAVY_RAIN ? format(translations.weatherInfoReportsHeavyRain, data.typeAndAmount.HEAVY_RAIN) : ''}
+                    { !!data && !!data.typeAndAmount && !!data.typeAndAmount.SNOW ? format(translations.weatherInfoReportsSnow, data.typeAndAmount.SNOW) : ''}
+                    { !!data && !!data.typeAndAmount && !!data.typeAndAmount.TRAFFIC ? format(translations.weatherInfoReportsTraffic, data.typeAndAmount.TRAFFIC) : ''}
+                    { !!data && !!data.typeAndAmount && !!data.typeAndAmount.ROAD_ACCIDENT ? format(translations.weatherInfoReportsAccidents, data.typeAndAmount.ROAD_ACCIDENT) : ''}
                 </Text>
             </View>
         )
@@ -120,7 +126,7 @@ const WeatherInfoScreen = () => {
             case 'favourites':
                 return favouriteData();
             default:
-                return <Text>Something went wrong</Text>
+                return <Text>{translations.somethingWentWrong}</Text>
         }
     }
 
@@ -140,9 +146,10 @@ const WeatherInfoScreen = () => {
         </Provider>
     );
 };
+
 const style = {
     weatherInfoStyle: {
-        backgroundColor: 'white',
+        backgroundColor: Appearance.getColorScheme() === 'dark' ? '#121212' : 'white',
         padding: 20
     },
     modalStyle: {

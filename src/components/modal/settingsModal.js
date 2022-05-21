@@ -1,32 +1,14 @@
 import * as React from 'react';
 import {useEffect, useState} from 'react';
-import {Avatar, Button, TextInput, ToggleButton, TouchableRipple} from 'react-native-paper';
+import {Avatar, Button, Text, TextInput, TouchableRipple} from 'react-native-paper';
 import {useDispatch, useSelector} from "react-redux";
 import {login, logout, setLanguage, setModalScreen, setNightMode, setUnits} from "../../store/actions/actions";
-import {View} from "react-native";
+import {Image, View} from "react-native";
 import {getLanguageTranslations} from "../common/languages/languageSelector";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import auth from "@react-native-firebase/auth";
 import {GoogleSignin} from "@react-native-google-signin/google-signin";
-
-const style = {
-    langView: {
-        flexDirection: 'row',
-        width: '100%'
-    },
-    selected: {
-        color: '#0f0a'
-    },
-    notSelected: {
-        color: '#0000'
-    },
-    loginButtonStyle: {
-        flexDirection: 'row',
-        width: '100%'
-    },
-    accountButtonsStyle: {},
-    accountView: {}
-}
+import {ReturnButton} from "./returnButton";
 
 const langs = ['en', 'ro'];
 
@@ -43,6 +25,30 @@ const languageImages = {
     }
 }
 
+const themeImages = {
+    normal: {
+        device: require('../../res/icons/device-black.png'),
+        day: require('../../res/icons/sun-black.png'),
+        night: require('../../res/icons/moon-black.png'),
+    },
+    selected: {
+        device: require('../../res/icons/device-white.png'),
+        day: require('../../res/icons/sun-white.png'),
+        night: require('../../res/icons/moon-white.png'),
+    }
+}
+
+const unitImages = {
+    normal: {
+        metric: require('../../res/icons/celsius-black.png'),
+        imperial: require('../../res/icons/fahrenheit-black.png'),
+    },
+    selected: {
+        metric: require('../../res/icons/celsius-white.png'),
+        imperial: require('../../res/icons/fahrenheit-white.png'),
+    }
+}
+
 GoogleSignin.configure({
     webClientId: "943316841319-l2mg8bl09aq9m3a65e62b9iu7em1i6s3.apps.googleusercontent.com",
 });
@@ -51,9 +57,9 @@ export const SettingsModal = () => {
     const dispatch = useDispatch();
 
     const nightMode = useSelector(state => state.user.nightMode);
-    const language = useSelector(state => state.user.language);
     const units = useSelector(state => state.user.units);
     const userEmail = useSelector(state => state.user.email);
+    const language = useSelector(state => state.user.language);
     const translations = getLanguageTranslations(language);
 
     const [email, setEmail] = useState('');
@@ -64,9 +70,9 @@ export const SettingsModal = () => {
     useEffect(() => {
     }, []);
 
-    const toggleNightMode = async () => {
-        await AsyncStorage.setItem('nightMode', !nightMode ? 'on' : 'off');
-        dispatch(setNightMode(!nightMode));
+    const toggleNightMode = async (nightM) => {
+        await AsyncStorage.setItem('nightMode', nightM);
+        dispatch(setNightMode(nightM));
     }
 
     const saveLang = async (lang) => {
@@ -97,11 +103,11 @@ export const SettingsModal = () => {
         return (
             <View style={style.loginButtonStyle}>
                 <Button mode="contained" title="Sign up" onPress={() => setAccountState('sign-up')}>
-                    Sign up
+                    {translations.signUp}
                 </Button>
                 <Button
                     mode="contained"
-                    title="Sign in"
+                    title="Email Sign in"
                     icon="email"
                     onPress={() => setAccountState('sign-in')}/>
                 <Button
@@ -120,19 +126,21 @@ export const SettingsModal = () => {
                     key={1}
                     onPress={() => dispatch(setModalScreen('main'))}
                     icon="arrow-left-thick"
-                > Back </Button>
+                > {translations.modalBackButton} </Button>
                 <TextInput
-                    label="Email"
+                    label={translations.email}
                     value={email}
                     onChangeText={text => setEmail(text)}>
                 </TextInput>
                 <TextInput
-                    label="Password"
+                    secureTextEntry={true}
+                    label={translations.password}
                     value={pass}
                     onChangeText={text => setPass(text)}>
                 </TextInput>
-                <Button type="contained" onPress={() => signIn()}>Login</Button>
-                <Button type="contained" onPress={() => setAccountState('forgot')}>Forgot Password</Button>
+                <Button type="contained" onPress={() => signIn()}>{translations.signIn}</Button>
+                <Button type="contained"
+                        onPress={() => setAccountState('forgot')}>{translations.forgotPassword}</Button>
             </View>
         )
     }
@@ -144,13 +152,14 @@ export const SettingsModal = () => {
                     key={1}
                     onPress={() => dispatch(setModalScreen('main'))}
                     icon="arrow-left-thick"
-                > Back </Button>
+                > {translations.modalBackButton} </Button>
                 <TextInput
-                    label="Email"
+                    label={translations.email}
                     value={email}
                     onChangeText={text => setEmail(text)}>
                 </TextInput>
-                <Button type="contained" onPress={() => forgotPassword()}>Send reset email</Button>
+                <Button type="contained"
+                        onPress={() => forgotPassword()}>{translations.sendPasswordRecoveryEmail}</Button>
             </View>
         )
     }
@@ -162,23 +171,25 @@ export const SettingsModal = () => {
                     key={1}
                     onPress={() => dispatch(setModalScreen('main'))}
                     icon="arrow-left-thick"
-                > Back </Button>
+                > {translations.modalBackButton} </Button>
                 <TextInput
-                    label="Email"
+                    label={translations.email}
                     value={email}
                     onChangeText={text => setEmail(text)}>
                 </TextInput>
                 <TextInput
-                    label="Password"
+                    secureTextEntry={true}
+                    label={translations.password}
                     value={pass}
                     onChangeText={text => setPass(text)}>
                 </TextInput>
                 <TextInput
-                    label="Confirm Password"
+                    secureTextEntry={true}
+                    label={translations.confirmPassword}
                     value={confirmPass}
                     onChangeText={text => setConfirmPass(text)}>
                 </TextInput>
-                <Button onPress={() => signUp()}>Login</Button>
+                <Button onPress={() => signUp()}>{translations.signUp}</Button>
             </View>
         )
     }
@@ -186,7 +197,7 @@ export const SettingsModal = () => {
     const logoutButtons = () => {
         return (
             <Button mode="contained" title="Sign out" onPress={() => signOut()}>
-                Sign out
+                {translations.signOut}
             </Button>
         )
     }
@@ -266,24 +277,113 @@ export const SettingsModal = () => {
         })
     }
 
+    const getLanguageText = () => {
+        switch (language) {
+            case 'en':
+                return translations.languageEnglish
+            case 'ro':
+                return translations.languageRomanian
+            default:
+                return ''
+        }
+    }
+
+    const getUnitsText = () => {
+        switch (units) {
+            case 'metric':
+                return translations.unitsMetric
+            case 'imperial':
+                return translations.unitsImperial
+            default:
+                return ''
+        }
+    }
+
+    const getNightModeText = () => {
+        switch (nightMode) {
+            case 'night':
+                return translations.nightModeNight
+            case 'day':
+                return translations.nightModeDay
+            case 'device':
+                return translations.nightModeDevice
+            default:
+                return ''
+        }
+    }
+
     return [
-        <Button
-            key={1}
-            onPress={() => dispatch(setModalScreen('main'))}
-            icon="arrow-left-thick"
-        > Back </Button>,
-        <Button icon="camera" mode="contained" onPress={() => toggleNightMode()}>
-            {nightMode ? translations.switchLightMode : translations.switchNightMode}
-        </Button>,
+        <ReturnButton/>,
         <View style={style.langView}>
-            {getLanguageImages()}
+            <Text style={style.languageButtonsStyle.textStyle}>{translations.language}</Text>
+            <View style={style.languageButtonsStyle}>
+                <TouchableRipple onPress={() => toggleNightMode('day')}
+                                 mode="contained" title="lang">
+                    <Image source={nightMode === 'day' ? themeImages.selected.day : themeImages.normal.day}/>
+                </TouchableRipple>
+                <TouchableRipple onPress={() => toggleNightMode('night')}
+                                 mode="contained" title="lang">
+                    <Image source={nightMode === 'night' ? themeImages.selected.night : themeImages.normal.night}/>
+                </TouchableRipple>
+                <TouchableRipple onPress={() => toggleNightMode('device')}
+                                 mode="contained" title="lang">
+                    <Image source={nightMode === 'device' ? themeImages.selected.device : themeImages.normal.device}/>
+                </TouchableRipple>
+                <Text style={style.languageButtonsStyle.textStyle}>{getNightModeText()}</Text>
+            </View>
         </View>,
-        <ToggleButton.Row onValueChange={value => saveUnits(value)} value={units} key={3}>
-            <ToggleButton icon="ruler" value="metric"/>
-            <ToggleButton icon="crown-outline" value="imperial"/>
-        </ToggleButton.Row>,
+        <View style={style.langView}>
+            <Text style={style.languageButtonsStyle.textStyle}>{translations.language}</Text>
+            <View style={style.languageButtonsStyle}>
+                {getLanguageImages()}
+                <Text style={style.languageButtonsStyle.textStyle}>{getLanguageText()}</Text>
+            </View>
+        </View>,
+        <View style={style.unitView}>
+            <Text style={style.unitButtonsStyle.textStyle}>{translations.measurementUnits}</Text>
+            <View style={style.unitButtonsStyle}>
+                <TouchableRipple onPress={() => saveUnits('metric')}
+                                 mode="contained" title="lang">
+                    <Image source={units === 'metric' ? unitImages.selected.metric : unitImages.normal.imperial}/>
+                </TouchableRipple>
+                <TouchableRipple onPress={() => saveUnits('imperial')}
+                                 mode="contained" title="lang">
+                    <Image source={units === 'imperial' ? unitImages.selected.metric : unitImages.normal.imperial}/>
+                </TouchableRipple>
+                <Text style={style.unitButtonsStyle.textStyle}>{getUnitsText()}</Text>
+            </View>
+        </View>,
         <View style={style.accountView}>
             {getAccountView()}
         </View>
     ]
 };
+
+const style = {
+    langView: {
+        flexDirection: 'column',
+        width: '100%'
+    },
+    languageButtonsStyle: {
+        flexDirection: 'row',
+        textStyle: {
+            fontSize: 32
+        }
+    },
+    unitView: {
+        flexDirection: 'column',
+        width: '100%'
+    },
+    unitButtonsStyle: {
+        flexDirection: 'row',
+        textStyle: {
+            fontSize: 32,
+        }
+    },
+    accountButtonsStyle: {},
+    accountView: {},
+    loginButtonStyle: {
+        flexDirection: 'row',
+        width: '100%'
+    },
+}

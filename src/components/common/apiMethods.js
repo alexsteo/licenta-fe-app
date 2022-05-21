@@ -14,8 +14,8 @@ export const getDirections = (searchTerm, dispatch) => {
         timeout: 15000,
     })
         .then(loc => {
-            let url = `http://10.0.2.2:3000/fe`
-            // let url = `https://licenta-backend-teo.herokuapp.com/route/set`
+            // let url = `http://10.0.2.2:3000/fe`
+            let url = `https://licenta-backend-teo.herokuapp.com/route/set`
             fetch(url)
                 .then(res => res.json())
                 .then(data => {
@@ -30,7 +30,7 @@ export const getDirections = (searchTerm, dispatch) => {
 }
 
 export const searchWeatherAtLocation = (searchTerm, dispatch) => {
-    let url = `http://10.0.2.2:8080/weather/${searchTerm.lat}/${searchTerm.lng}`;
+    let url = `https://licenta-backend-teo.herokuapp.com/weather/${searchTerm.lat}/${searchTerm.lng}`;
     fetch(url)
         .then(res => res.json())
         .then(data => {
@@ -39,17 +39,8 @@ export const searchWeatherAtLocation = (searchTerm, dispatch) => {
         });
 }
 
-export const getUserReports = (dispatch) => {
-    let url = `http://10.0.2.2:8080/report/`;
-    fetch(url)
-        .then(res => res.json())
-        .then(data => {
-            dispatch(setReports(data));
-        });
-}
-
 export const getFavouritesForUser = (dispatch, user) => {
-    let url = `http://10.0.2.2:8080/favourites/weather/${user}`;
+    let url = `https://licenta-backend-teo.herokuapp.com/favourites/weather/${user}`;
     fetch(url)
         .then(res => res.json())
         .then(data => {
@@ -57,15 +48,15 @@ export const getFavouritesForUser = (dispatch, user) => {
         });
 }
 
-export const submitReport = (type, dispatch) => {
+export const submitReport = (type, dispatch, user) => {
     GetLocation.getCurrentPosition({
         enableHighAccuracy: true,
         timeout: 15000,
     })
         .then(loc => {
-            const url = `http://10.0.2.2:8080/report/insert`
+            const url = `https://licenta-backend-teo.herokuapp.com/report/insert`
             const data = {
-                reporter: 'this_one',
+                reporter: user,
                 lat: loc.latitude,
                 lng: loc.longitude,
                 type
@@ -89,10 +80,10 @@ export const submitReport = (type, dispatch) => {
         })
 }
 
-export const addFavourite = (location, dispatch) => {
-    const url = `http://10.0.2.2:8080/favourites/insert`;
+export const addFavourite = (location, dispatch, user) => {
+    const url = `https://licenta-backend-teo.herokuapp.com/favourites/insert`;
     const data = {
-        username: 'this_one',
+        username: user,
         lat: location.lat,
         lng: location.lng,
         city: location.name
@@ -113,8 +104,8 @@ export const addFavourite = (location, dispatch) => {
         });
 }
 
-export const deleteFavourite = (city, dispatch) => {
-    const url = `http://10.0.2.2:8080/favourites/city/${city}`;
+export const deleteFavourite = (city, dispatch, user) => {
+    const url = `https://licenta-backend-teo.herokuapp.com/favourites/city/${city}/${user}`;
     const options = {
         method: 'DELETE',
     };

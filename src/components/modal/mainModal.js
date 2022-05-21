@@ -1,10 +1,14 @@
 import * as React from 'react';
 import {Button} from 'react-native-paper';
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {setModalScreen} from "../../store/actions/actions";
+import {getLanguageTranslations} from "../common/languages/languageSelector";
 
 export const MainModal = () => {
     const dispatch = useDispatch();
+
+    const language = useSelector(state => state.user.language);
+    const translations = getLanguageTranslations(language);
 
     return [
         <Button
@@ -12,18 +16,18 @@ export const MainModal = () => {
             title="Add Favourite Location"
             onPress={() => dispatch(setModalScreen('favourite'))}
             icon="heart-outline"
-        > Add Favourite Location </Button>,
+        > {translations.modalAddFavourite} </Button>,
         <Button
             key={2}
             title="Report a problem on the road"
             onPress={() => dispatch(setModalScreen('report'))}
             icon="alert-octagon"
-        > Report a problem on the road </Button>,
+        > {translations.modalReportProblem} </Button>,
         <Button
             key={3}
             title="Settings"
             onPress={() => dispatch(setModalScreen('settings'))}
             icon="cog"
-        > Settings </Button>,
+        > {translations.modalSettingsButton} </Button>,
     ]
 };

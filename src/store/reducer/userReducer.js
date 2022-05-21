@@ -1,7 +1,7 @@
 import {LOGIN, LOGOUT, SET_LANGUAGE, SET_NIGHT_MODE, SET_UNITS} from "../actions/types";
 
 const INITIAL_STATE = {
-    nightMode: false,
+    nightMode: 'device',
     units: 'metric',
     language: 'en',
     email: '',
