@@ -14,7 +14,7 @@ export const getDirections = (searchTerm, dispatch, setSnackbar) => {
         timeout: 15000,
     })
         .then(loc => {
-            let url = `https://licenta-backend-teo.herokuapp.com/route/set`
+            let url = `https://licenta-backend-teo.herokuapp.com/route/${loc.latitude + "," + loc.longitude}/${searchTerm.lat + "," + searchTerm.lng}`
             fetch(url)
                 .then(res => res.json())
                 .then(data => {
@@ -106,11 +106,9 @@ export const addFavourite = (location, dispatch, user) => {
         },
         body: JSON.stringify(data),
     };
-    console.log(url, options)
     fetch(url, options)
         .then(res => res.json())
         .then(data => {
-            console.log(data)
             dispatch(addToFavourites(data));
             dispatch(setModalScreen("main"));
             dispatch(hideModal());

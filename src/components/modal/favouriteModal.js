@@ -34,7 +34,6 @@ export const FavouriteModal = () => {
     }, []);
 
     const setFavourite = (location) => {
-        console.log(location)
         !!location.name ? addFavourite(location, dispatch, userEmail) : noLocationSelected();
     }
 
@@ -42,7 +41,6 @@ export const FavouriteModal = () => {
     }
 
     const selectLocation = (loc) => {
-        console.log(loc)
         Keyboard.dismiss();
         setSelectedLocation(loc);
         setSearchTerm(loc.ascii);

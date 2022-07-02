@@ -45,7 +45,7 @@ export const Map = ({navToLocFunc, rotateToNorthFunc}) => {
             case 0:
                 idx = idx + 1;
                 idx = idx % 3;
-                return '#f00'
+                return '#0f0'
             case 1:
                 idx = idx + 1;
                 idx = idx % 3;
@@ -53,7 +53,7 @@ export const Map = ({navToLocFunc, rotateToNorthFunc}) => {
             case 2:
                 idx = idx + 1;
                 idx = idx % 3;
-                return '#0f0'
+                return '#f00'
             default:
                 return '#f00'
         }
@@ -230,7 +230,7 @@ export const Map = ({navToLocFunc, rotateToNorthFunc}) => {
             provider={PROVIDER_GOOGLE}
             style={backgroundStyle.map}
             initialRegion={mapView}
-            customMapStyle={(console.log(isNightMode(nightMode)) || console.log(nightMode) || isNightMode(nightMode)) ? MapStyles.nightMode : MapStyles.lightMode}>
+            customMapStyle={isNightMode(nightMode) ? MapStyles.nightMode : MapStyles.lightMode}>
             {addRoutes(routes)}
             {addWeatherData(currentWeather)}
             {addReportsForRoutes(reports)}

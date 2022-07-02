@@ -15,7 +15,6 @@ const format = (toFormat, ...values) => {
 }
 
 const getMeasurementValue = (value, units, type) => {
-    console.log(value, units, type, "asdasd")
     if (units === 'metric') return value;
     switch (type) {
         case 'length':
