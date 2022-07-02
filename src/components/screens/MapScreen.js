@@ -1,4 +1,4 @@
-import React, {useRef} from 'react';
+import React, {useRef, useState} from 'react';
 import {Dimensions, View} from "react-native";
 import {Map} from "../map/Map";
 import {DirectionSearch} from "../inputs/directionSearch";
@@ -7,11 +7,15 @@ import {Navigator} from "../inputs/navigator";
 import {useDispatch, useSelector} from "react-redux";
 import ModalSettings from "../modal/modalSettings";
 import WeatherInfoScreen from "../weatherInfo/weatherInfoScreen";
-import {Avatar, Text, TouchableRipple} from "react-native-paper";
+import {Avatar, Snackbar, Text, TouchableRipple} from "react-native-paper";
 import {SliderComponent} from "../map/slider";
 import {FavouriteSearch} from "../inputs/favouriteSearch";
+import {getLanguageTranslations} from "../common/languages/languageSelector";
 
 export const MapScreen = () => {
+
+    const language = useSelector(state => state.user.language);
+    const translations = getLanguageTranslations(language);
 
     const routes = useSelector(state => state.nav.routes);
     const searchType = useSelector(state => state.screen.searchType);
@@ -27,7 +31,7 @@ export const MapScreen = () => {
     const getSearchType = (key) => {
         switch (key) {
             case "navigation":
-                return <DirectionSearch style={style.searchBar}/>
+                return <DirectionSearch style={style.searchBar} setSnackBar={setSnackBar}/>
             case "weather":
                 return <WeatherSearch style={style.searchBar}/>
             case "favourites":
@@ -58,6 +62,12 @@ export const MapScreen = () => {
         return `Weather data is for ${day} at ${time} o'clock`
     }
 
+    const [snackBar, setSnackBar] = useState(false);
+
+    const onDismissSnackbar = () => {
+        setSnackBar(false);
+    }
+
     return (
         <View>
             <View>
@@ -84,6 +94,16 @@ export const MapScreen = () => {
                 </View>
                 <ModalSettings style={style.modalStyle}/>
                 <WeatherInfoScreen/>
+                <Snackbar
+                    visible={snackBar}
+                    onDismiss={onDismissSnackbar}
+                    duration={5000}
+                    action={{
+                        label: 'Ok',
+                        onPress: () => onDismissSnackbar(),
+                    }}>
+                    {translations.snackBarRoutes}
+                </Snackbar>
             </View>
         </View>
     )

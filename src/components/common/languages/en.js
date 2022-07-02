@@ -48,6 +48,7 @@ export const en = {
     signUpTitle: 'Create Account',
     forgotTitle: 'Recover Password',
     snackBarFavourite: 'You need to be logged in to view favourites',
+    snackBarRoutes: 'Encountered an error while searching for routes. Please try again!',
     somethingWentWrong: 'Something went wrong',
     weatherInfoRoute: 'Route is {/} km long\n' +
         'with a score of {/}\n',

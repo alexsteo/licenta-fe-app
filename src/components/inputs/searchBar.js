@@ -1,13 +1,17 @@
 import React, {useEffect, useState} from 'react';
 import {Keyboard, View} from "react-native";
-import {Avatar, Button, List, Searchbar, Text, TouchableRipple} from "react-native-paper";
+import {Avatar, Button, List, Searchbar, Snackbar, Text, TouchableRipple} from "react-native-paper";
 import {useDispatch, useSelector} from "react-redux";
 import {hideModal, showModal} from "../../store/actions/actions";
 import {cities} from "../../res/cityList.js"
 import loggedInImage from "../../res/profile.png";
 import anonImage from "../../res/anon.png";
+import {getLanguageTranslations} from "../common/languages/languageSelector";
 
-export const SearchBar = ({searchPlaceHolder, searchMethod}) => {
+export const SearchBar = ({searchPlaceHolder, searchMethod, setSnackBar}) => {
+
+    const language = useSelector(state => state.user.language);
+    const translations = getLanguageTranslations(language);
 
     const [searchTerm, setSearchTerm] = useState("");
     const [showSuggestions, setShowSuggestions] = useState(false);
@@ -60,7 +64,7 @@ export const SearchBar = ({searchPlaceHolder, searchMethod}) => {
                         key={loc.name + loc.lat + loc.lng + Math.random()}
                         onPress={() => {
                             Keyboard.dismiss();
-                            searchMethod(loc, dispatch);
+                            searchMethod(loc, dispatch, setSnackBar);
                         }}
                         mode="contained"
                         style={searchStyle.suggestionStyle}
@@ -113,13 +117,13 @@ export const SearchBar = ({searchPlaceHolder, searchMethod}) => {
 
 
 const searchStyle = {
+    flexDirection: "column",
     accountButtonStyle: {
         backgroundColor: '#ababab',
         fontSize: 40,
         textAlign: 'center',
         textAlignVertical: 'center',
     },
-    flexDirection: "column",
     searchViewStyle: {
         flex: 1,
         flexDirection: 'row',

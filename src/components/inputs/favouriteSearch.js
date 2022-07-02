@@ -11,7 +11,7 @@ export const FavouriteSearch = () => {
     const language = useSelector(state => state.user.language);
     const translations = getLanguageTranslations(language);
 
-    const navigateToSearchLocation = (loc, dispatch) => {
+    const navigateToSearchLocation = (loc, dispatch, setSnackBar) => {
         const region = {
             latitude: parseFloat(loc.lat),
             longitude: parseFloat(loc.lng),

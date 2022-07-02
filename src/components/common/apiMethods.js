@@ -8,28 +8,31 @@ import {
     setSearchedFor
 } from "../../store/actions/actions";
 
-export const getDirections = (searchTerm, dispatch) => {
+export const getDirections = (searchTerm, dispatch, setSnackbar) => {
     GetLocation.getCurrentPosition({
         enableHighAccuracy: true,
         timeout: 15000,
     })
         .then(loc => {
-            // let url = `http://10.0.2.2:3000/fe`
             let url = `https://licenta-backend-teo.herokuapp.com/route/set`
             fetch(url)
                 .then(res => res.json())
                 .then(data => {
-                    dispatch(resolveRouteCall(data));
-                    dispatch(setMapView(data.routeWithData));
+                    console.log(data)
+                    if(!!data.status || !!data.error) {
+                        setSnackbar(true);
+                    } else {
+                        dispatch(resolveRouteCall(data));
+                        dispatch(setMapView(data.routeWithData));
+                    }
+                })
+                .catch(error => {
+                    setSnackbar(true);
                 });
-        })
-        .catch(error => {
-            const {code, message} = error;
-            console.warn(code, message);
-        })
+        });
 }
 
-export const searchWeatherAtLocation = (searchTerm, dispatch) => {
+export const searchWeatherAtLocation = (searchTerm, dispatch, setSnackBar) => {
     let url = `https://licenta-backend-teo.herokuapp.com/weather/${searchTerm.lat}/${searchTerm.lng}`;
     fetch(url)
         .then(res => res.json())
@@ -43,7 +46,8 @@ export const searchWeatherAtLocation = (searchTerm, dispatch) => {
             dispatch(setMapViewWithCoords(region))
             dispatch(setCurrentWeather(data));
             dispatch(setSearchedFor(searchTerm));
-        });
+        })
+        .catch(error => setSnackBar(true));
 }
 
 export const getFavouritesForUser = (dispatch, user) => {
