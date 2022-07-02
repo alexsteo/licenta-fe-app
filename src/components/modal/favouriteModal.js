@@ -1,22 +1,12 @@
 import * as React from 'react';
 import {useEffect, useState} from 'react';
-import {Button, List, Searchbar, Text} from 'react-native-paper';
+import {Button, Searchbar, Text} from 'react-native-paper';
 import {useDispatch, useSelector} from "react-redux";
 import {cities} from "../../res/cityList";
 import {Keyboard, View} from "react-native";
 import {addFavourite} from "../common/apiMethods";
 import {getLanguageTranslations} from "../common/languages/languageSelector";
 import {ReturnButton} from "./returnButton";
-
-const style = {
-    suggestionListStyle: {
-        marginTop: '15%',
-        backgroundColor: '#444d'
-    },
-    suggestionStyle: {
-        paddingTop: '2.5%'
-    },
-}
 
 export const FavouriteModal = () => {
     const dispatch = useDispatch();
@@ -44,6 +34,7 @@ export const FavouriteModal = () => {
     }, []);
 
     const setFavourite = (location) => {
+        console.log(location)
         !!location.name ? addFavourite(location, dispatch, userEmail) : noLocationSelected();
     }
 
@@ -51,6 +42,7 @@ export const FavouriteModal = () => {
     }
 
     const selectLocation = (loc) => {
+        console.log(loc)
         Keyboard.dismiss();
         setSelectedLocation(loc);
         setSearchTerm(loc.ascii);
@@ -73,57 +65,82 @@ export const FavouriteModal = () => {
                 let popB = !isNaN(parseInt(b.pop)) ? parseInt(b.pop) : 0;
                 return popB - popA;
             })
-            .slice(0, 3);
+            .slice(0, 5);
         return cityList
             .map(
                 loc => {
-                    return <List.Item
+                    return <Button
                         title={loc.ascii + ", " + loc.country.toUpperCase()}
                         key={loc.name + loc.lat + loc.lng + Math.random()}
-                        left={props => <List.Icon {...props} icon="map-marker"/>}
                         onPress={() => selectLocation(loc)}
-                    />
+                        mode="outlined"
+                        style={style.suggestionStyle}
+                    > <Text style={{ color: 'black'}}>{loc.ascii + ", " + loc.country.toUpperCase()}</Text> </Button>
                 }
             )
     }
 
     const getSuggestions = () => {
-        return showSuggestions &&
+        return (
             <View style={style.suggestionListStyle}>
                 {generateSuggestions(searchTerm)}
             </View>
+        )
     }
 
     const getScreen = () => {
         if (!!userEmail && userEmail !== '') {
-            return [
-                <ReturnButton/>,
-                <Text
-                    key={2}
-                    title="Add a location to your favourites"
-                > {translations.favouritesModalTitle} </Text>,
+            return <View>
+                <ReturnButton/>
+                <Text style={style.titleStyle}
+                      key={2}
+                      title="Add a location to your favourites"
+                > {translations.favouritesModalTitle} </Text>
                 <Searchbar
                     key={3}
                     placeholder={translations.searchForLocation}
                     onChangeText={setSearchTerm}
                     value={searchTerm}
-                />,
+                />
                 <View key={4}>
                     {getSuggestions()}
-                </View>,
+                </View>
                 <View>
-                    <Button icon="camera" mode="contained" onPress={() => setFavourite(selectedLocation)} key={5}>
+                    <Button icon="camera" mode="contained" onPress={() => setFavourite(selectedLocation)} key={5}
+                            style={style.saveStyle} color={'black'}>
                         {translations.saveFavourites}
                     </Button>
                 </View>
-            ]
+            </View>
         } else {
-            return [
-                <ReturnButton/>,
+            return <View>
+                <ReturnButton/>
                 <Text>{translations.noUserFavourites}</Text>
-            ]
+            </View>
         }
     }
 
     return getScreen();
 };
+
+
+const style = {
+    suggestionListStyle: {
+        marginTop: '5%',
+        marginBottom: '5%',
+        color: 'black',
+    },
+    suggestionStyle: {
+        marginTop: 5,
+        borderColor: 'black',
+        borderWidth: 2
+    },
+    saveStyle: {},
+    titleStyle: {
+        marginTop: '5%',
+        marginBottom: '5%',
+        textAlign: 'center',
+        fontSize: 22,
+        color: 'black',
+    }
+}

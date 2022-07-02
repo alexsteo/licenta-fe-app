@@ -19,10 +19,6 @@ const INITIAL_STATE = {
     showWeatherInfoScreen: false,
     weatherInfoScreenData: {},
     weatherInfoScreenType: '',
-    nightMode: false,
-    units: 'metric',
-    language: 'en',
-    email: '',
     routePlusHours: 0,
     mapView: {
         latitude: 46.7657,

@@ -6,7 +6,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import {login, setLanguage, setMapViewWithCoords, setNightMode, setUnits} from "../../store/actions/actions";
 import auth from "@react-native-firebase/auth";
 import GetLocation from "react-native-get-location";
-import {getFavouritesForUser} from "../common/apiMethods";
+import {getAllReports, getFavouritesForUser} from "../common/apiMethods";
 
 export const MainScreen = () => {
 
@@ -40,6 +40,8 @@ export const MainScreen = () => {
         async function setInitialData() {
             const response = await getValuesAndDispatch();
         }
+
+        getAllReports(dispatch);
 
         setInitialData().then(r => r);
         setMapView();

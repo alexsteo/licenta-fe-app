@@ -1,9 +1,11 @@
 import React, {useEffect, useState} from 'react';
 import {Keyboard, View} from "react-native";
-import {Avatar, List, Searchbar, TouchableRipple} from "react-native-paper";
+import {Avatar, Button, List, Searchbar, Text, TouchableRipple} from "react-native-paper";
 import {useDispatch, useSelector} from "react-redux";
 import {hideModal, showModal} from "../../store/actions/actions";
 import {cities} from "../../res/cityList.js"
+import loggedInImage from "../../res/profile.png";
+import anonImage from "../../res/anon.png";
 
 export const SearchBar = ({searchPlaceHolder, searchMethod}) => {
 
@@ -32,44 +34,6 @@ export const SearchBar = ({searchPlaceHolder, searchMethod}) => {
         };
     }, []);
 
-    const searchStyle = {
-        flexDirection: "column",
-        searchViewStyle: {
-            flex: 1,
-            flexDirection: 'row',
-            position: 'absolute',
-            top: '0%',
-            marginTop: '2.5%',
-            justifyContent: 'center',
-            alignItems: 'center',
-        },
-        searchBoxStyle: {
-            marginLeft: '3%',
-            marginRight: '4%',
-            width: '75%',
-        },
-        rippleStyle: {
-            marginRight: '3%',
-            width: '15%',
-            height: '100%',
-            overflow: 'hidden',
-            backgroundColor: '#ccc0',
-            borderRadius: 50
-        },
-        suggestionListStyle: {
-            marginTop: '15%',
-            backgroundColor: '#444d'
-        },
-        suggestionStyle: {
-            paddingTop: '2.5%'
-        },
-        imageStyle: {
-            height: 50,
-            width: 50,
-            borderRadius: 50
-        }
-    }
-
     const generateSuggestions = (location) => {
         const cityList = cities.map(city => {
             return {
@@ -87,19 +51,21 @@ export const SearchBar = ({searchPlaceHolder, searchMethod}) => {
                 let popB = !isNaN(parseInt(b.pop)) ? parseInt(b.pop) : 0;
                 return popB - popA;
             })
-            .slice(0, 5);
+            .slice(0, 7);
         return cityList
             .map(
                 loc => {
-                    return <List.Item
+                     return <Button
                         title={loc.ascii + ", " + loc.country.toUpperCase()}
-                        key={loc.name + loc.lat + loc.lng}
-                        left={props => <List.Icon {...props} icon="map-marker"/>}
+                        key={loc.name + loc.lat + loc.lng + Math.random()}
                         onPress={() => {
                             Keyboard.dismiss();
                             searchMethod(loc, dispatch);
                         }}
-                    />
+                        mode="contained"
+                        style={searchStyle.suggestionStyle}
+                        color={'black'}
+                    > {loc.ascii + ", " + loc.country.toUpperCase()} </Button>
                 }
             )
     }
@@ -115,6 +81,14 @@ export const SearchBar = ({searchPlaceHolder, searchMethod}) => {
         modalIsOpen ? dispatch(hideModal()) : dispatch(showModal());
     }
 
+    const getModalButton = () => {
+        if(!!userEmail && userEmail !== '' ) {
+            return <Text style={searchStyle.accountButtonStyle}>{userEmail[0].toUpperCase()}</Text>
+        } else{
+            return <Avatar.Image size={50} source={anonImage}/>
+        }
+    }
+
     return (
         <View>
             <View style={searchStyle}>
@@ -127,11 +101,60 @@ export const SearchBar = ({searchPlaceHolder, searchMethod}) => {
                     />
                     <TouchableRipple style={searchStyle.rippleStyle} onPress={() => toggleModal()}
                                      mode="contained" title="aaa">
-                        <Avatar.Image size={50} source={!!userEmail && userEmail !== '' ? loggedInImage : anonImage}/>
+                        {getModalButton()}
                     </TouchableRipple>
                 </View>
                 {getSuggestions()}
             </View>
         </View>
     )
+}
+
+
+
+const searchStyle = {
+    accountButtonStyle: {
+        backgroundColor: '#ababab',
+        fontSize: 40,
+        textAlign: 'center',
+        textAlignVertical: 'center',
+    },
+    flexDirection: "column",
+    searchViewStyle: {
+        flex: 1,
+        flexDirection: 'row',
+        position: 'absolute',
+        top: '0%',
+        marginTop: '2.5%',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    searchBoxStyle: {
+        marginLeft: '3%',
+        marginRight: '4%',
+        width: '75%',
+    },
+    rippleStyle: {
+        marginRight: '3%',
+        width: '15%',
+        height: '100%',
+        overflow: 'hidden',
+        backgroundColor: '#ccc0',
+        borderRadius: 50
+    },
+    suggestionListStyle: {
+        marginTop: '15%',
+    },
+    suggestionStyle: {
+        marginTop: 10,
+        borderColor: 'white',
+        borderWidth: 2,
+        marginLeft: '3%',
+        width: '92%'
+    },
+    imageStyle: {
+        height: 50,
+        width: 50,
+        borderRadius: 50
+    }
 }

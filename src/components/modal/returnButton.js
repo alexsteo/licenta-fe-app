@@ -12,7 +12,7 @@ export const ReturnButton = () => {
         <View style={style.viewStyle}>
             <TouchableRipple style={style.buttonStyle} onPress={() => dispatch(setModalScreen('main'))}
                              mode="contained" title="aaa">
-                <Image style={style.buttonStyle} source={require('../../res/back.png')}/>
+                <Image style={style.buttonStyle} source={require('../../res/icons/back.png')}/>
             </TouchableRipple>
             <Image style={style.imageStyle} source={require('../../res/logo.png')}/>
         </View>
@@ -29,7 +29,7 @@ const style = {
     },
     imageStyle: {
         height: 50,
-        width: 150,
-        marginLeft: 30
+        width: 200,
+        marginLeft: 20
     }
 }

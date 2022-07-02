@@ -4,13 +4,16 @@ import {BottomMenu, Item} from "react-native-bottom-menu";
 import {useDispatch, useSelector} from "react-redux";
 import {setSearchType} from "../../store/actions/actions";
 import {getLanguageTranslations} from "../common/languages/languageSelector";
+import {Snackbar} from "react-native-paper";
 
 export const Navigator = (props) => {
 
     const [screen, setScreen] = useState("navigation");
+    const [snackBar, setSnackBar] = useState(false);
     const dispatch = useDispatch();
 
     const language = useSelector(state => state.user.language);
+    const user = useSelector(state => state.user.email);
     const translations = getLanguageTranslations(language);
 
     const style = {
@@ -18,12 +21,29 @@ export const Navigator = (props) => {
     }
 
     const onMenuItemPress = (key) => {
+        if(key === 'favourites' && !user) {
+            setSnackBar(true);
+        }
         setScreen(key);
         dispatch(setSearchType(key));
     }
 
+    const onDismissSnackbar = () => {
+        setSnackBar(false);
+    }
+
     return (
         <View style={style}>
+            <Snackbar
+                visible={snackBar}
+                onDismiss={onDismissSnackbar}
+                duration={5000}
+                action={{
+                    label: 'Ok',
+                    onPress: () => onDismissSnackbar(),
+                }}>
+                {translations.snackBarFavourite}
+            </Snackbar>
             <BottomMenu>
                 <Item
                     size={22}
@@ -48,6 +68,14 @@ export const Navigator = (props) => {
                     type="Feather"
                     isActive={screen === "favourites"}
                     onPress={() => onMenuItemPress("favourites")}
+                />
+                <Item
+                    size={30}
+                    name="alert-triangle"
+                    text={translations.navigatorReports}
+                    type="Feather"
+                    isActive={screen === "reports"}
+                    onPress={() => onMenuItemPress("reports")}
                 />
             </BottomMenu>
         </View>

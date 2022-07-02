@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {useEffect, useState} from 'react';
-import {Avatar, Button, Text, TextInput, TouchableRipple} from 'react-native-paper';
+import {Button, Text, TextInput, TouchableRipple} from 'react-native-paper';
 import {useDispatch, useSelector} from "react-redux";
 import {login, logout, setLanguage, setModalScreen, setNightMode, setUnits} from "../../store/actions/actions";
 import {Image, View} from "react-native";
@@ -91,9 +91,8 @@ export const SettingsModal = () => {
                     Object.entries(languageImages.selected).filter(entry => entry[0] === lang)[0][1] :
                     Object.entries(languageImages.normal).filter(entry => entry[0] === lang)[0][1];
                 return <TouchableRipple onPress={() => saveLang(lang)}
-                                        mode="contained" title="lang">
-                    <Avatar.Image size={50}
-                                  source={image}/>
+                                        mode="contained" title="lang" style={style.langRipple}>
+                    <Image source={image} style={style.imgStyle}/>
                 </TouchableRipple>
             }
         )
@@ -101,16 +100,30 @@ export const SettingsModal = () => {
 
     const mainButtons = () => {
         return (
-            <View style={style.loginButtonStyle}>
-                <Button mode="contained" title="Sign up" onPress={() => setAccountState('sign-up')}>
-                    {translations.signUp}
-                </Button>
+            <View style={style.mainAccButtonView}>
                 <Button
+                    style={style.mainAccButtonView.button}
+                    labelStyle={{fontSize: 40}}
+                    contentStyle={style.mainAccButtonView.buttonContent}
+                    color={'black'}
+                    icon="account-plus"
+                    mode="contained"
+                    title="Sign up"
+                    onPress={() => setAccountState('sign-up')}/>
+                <Button
+                    style={style.mainAccButtonView.button}
+                    labelStyle={{fontSize: 40}}
+                    contentStyle={style.mainAccButtonView.buttonContent}
+                    color={'black'}
                     mode="contained"
                     title="Email Sign in"
-                    icon="email"
+                    icon="login"
                     onPress={() => setAccountState('sign-in')}/>
                 <Button
+                    style={style.mainAccButtonView.button}
+                    labelStyle={{fontSize: 40}}
+                    contentStyle={style.mainAccButtonView.buttonContent}
+                    color={'black'}
                     mode="contained"
                     title="Google Sign-In"
                     icon="google"
@@ -121,82 +134,98 @@ export const SettingsModal = () => {
 
     const signInButtons = () => {
         return (
-            <View>
+            <View style={style.signIn.mainView}>
                 <Button
                     key={1}
-                    onPress={() => dispatch(setModalScreen('main'))}
+                    onPress={() => setAccountState('main')}
                     icon="arrow-left-thick"
+                    color={'black'}
                 > {translations.modalBackButton} </Button>
-                <TextInput
-                    label={translations.email}
-                    value={email}
-                    onChangeText={text => setEmail(text)}>
-                </TextInput>
-                <TextInput
-                    secureTextEntry={true}
-                    label={translations.password}
-                    value={pass}
-                    onChangeText={text => setPass(text)}>
-                </TextInput>
-                <Button type="contained" onPress={() => signIn()}>{translations.signIn}</Button>
-                <Button type="contained"
-                        onPress={() => setAccountState('forgot')}>{translations.forgotPassword}</Button>
+                <View style={style.signIn.textInputs}>
+                    <TextInput
+                        label={translations.email}
+                        value={email}
+                        onChangeText={text => setEmail(text)}>
+                    </TextInput>
+                </View>
+                <View style={style.signIn.textInputs}>
+                    <TextInput
+                        secureTextEntry={true}
+                        label={translations.password}
+                        value={pass}
+                        onChangeText={text => setPass(text)}>
+                    </TextInput>
+                </View>
+                <Button mode={'contained'} style={style.signIn.button} color={'black'}
+                        labelStyle={{fontSize: 20}} onPress={() => signIn()}>{translations.signIn}</Button>
+                <Button mode={'contained'} style={style.signIn.button} color={'black'}
+                        labelStyle={{fontSize: 20}} onPress={() => setAccountState('forgot')}>{translations.forgotPassword}</Button>
             </View>
         )
     }
 
     const forgotButtons = () => {
         return (
-            <View>
+            <View style={style.forgot.mainView}>
                 <Button
                     key={1}
-                    onPress={() => dispatch(setModalScreen('main'))}
+                    onPress={() => setAccountState('sign-up')}
                     icon="arrow-left-thick"
+                    color={'black'}
                 > {translations.modalBackButton} </Button>
-                <TextInput
-                    label={translations.email}
-                    value={email}
-                    onChangeText={text => setEmail(text)}>
-                </TextInput>
-                <Button type="contained"
-                        onPress={() => forgotPassword()}>{translations.sendPasswordRecoveryEmail}</Button>
+                <View style={style.forgot.textInputs}>
+                    <TextInput
+                        label={translations.email}
+                        value={email}
+                        onChangeText={text => setEmail(text)}>
+                    </TextInput>
+                </View>
+                <Button mode={'contained'} style={style.forgot.button} color={'black'} labelStyle={{fontSize: 20}}
+                         onPress={() => forgotPassword()}>{translations.sendPasswordRecoveryEmail}</Button>
             </View>
         )
     }
 
     const signUpButtons = () => {
         return (
-            <View>
+            <View style={style.signUp.mainView}>
                 <Button
                     key={1}
-                    onPress={() => dispatch(setModalScreen('main'))}
+                    onPress={() => setAccountState('main')}
                     icon="arrow-left-thick"
+                    color={'black'}
                 > {translations.modalBackButton} </Button>
-                <TextInput
-                    label={translations.email}
-                    value={email}
-                    onChangeText={text => setEmail(text)}>
-                </TextInput>
-                <TextInput
-                    secureTextEntry={true}
-                    label={translations.password}
-                    value={pass}
-                    onChangeText={text => setPass(text)}>
-                </TextInput>
-                <TextInput
-                    secureTextEntry={true}
-                    label={translations.confirmPassword}
-                    value={confirmPass}
-                    onChangeText={text => setConfirmPass(text)}>
-                </TextInput>
-                <Button onPress={() => signUp()}>{translations.signUp}</Button>
+                <View style={style.signUp.textInputs}>
+                    <TextInput
+                        label={translations.email}
+                        value={email}
+                        onChangeText={text => setEmail(text)}>
+                    </TextInput>
+                </View>
+                <View style={style.signUp.textInputs}>
+                    <TextInput
+                        secureTextEntry={true}
+                        label={translations.password}
+                        value={pass}
+                        onChangeText={text => setPass(text)}>
+                    </TextInput>
+                </View>
+                <View style={style.signUp.textInputs}>
+                    <TextInput
+                        secureTextEntry={true}
+                        label={translations.confirmPassword}
+                        value={confirmPass}
+                        onChangeText={text => setConfirmPass(text)}>
+                    </TextInput>
+                </View>
+                <Button onPress={() => signUp()} mode={'contained'} style={style.signUp.button} color={'black'} labelStyle={{fontSize: 20}}>{translations.signUp}</Button>
             </View>
         )
     }
 
     const logoutButtons = () => {
         return (
-            <Button mode="contained" title="Sign out" onPress={() => signOut()}>
+            <Button style={style.signOut} mode="contained" title="Sign out" onPress={() => signOut()} color={'black'}>
                 {translations.signOut}
             </Button>
         )
@@ -312,78 +341,279 @@ export const SettingsModal = () => {
         }
     }
 
-    return [
-        <ReturnButton/>,
-        <View style={style.langView}>
-            <Text style={style.languageButtonsStyle.textStyle}>{translations.language}</Text>
-            <View style={style.languageButtonsStyle}>
-                <TouchableRipple onPress={() => toggleNightMode('day')}
-                                 mode="contained" title="lang">
-                    <Image source={nightMode === 'day' ? themeImages.selected.day : themeImages.normal.day}/>
-                </TouchableRipple>
-                <TouchableRipple onPress={() => toggleNightMode('night')}
-                                 mode="contained" title="lang">
-                    <Image source={nightMode === 'night' ? themeImages.selected.night : themeImages.normal.night}/>
-                </TouchableRipple>
-                <TouchableRipple onPress={() => toggleNightMode('device')}
-                                 mode="contained" title="lang">
-                    <Image source={nightMode === 'device' ? themeImages.selected.device : themeImages.normal.device}/>
-                </TouchableRipple>
-                <Text style={style.languageButtonsStyle.textStyle}>{getNightModeText()}</Text>
+    const getAccountSettingsTitle = () => {
+        switch (accountState) {
+            case 'main':
+                return translations.accountSettings;
+            case 'sign-in':
+                return translations.signInTitle;
+            case 'sign-up':
+                return translations.signUpTitle;
+            case 'forgot':
+                return translations.forgotTitle;
+            default:
+                return translations.accountSettings;
+        }
+    }
+
+    const getSettings = () => {
+        return ((!!userEmail && userEmail !== '') || accountState === 'main') && <View>
+            <View style={style.themeView}>
+                <View style={style.themeView.textView}>
+                    <Text style={style.themeButtonsStyle.textStyle}>{translations.theme}</Text>
+                    <Text style={style.languageButtonsStyle.textStyle}>{getNightModeText()}</Text>
+                </View>
+                <View style={style.themeButtonsStyle}>
+                    <TouchableRipple onPress={() => toggleNightMode('day')}
+                                     mode="contained" title="lang" style={style.themeRipple}>
+                        <Image source={nightMode === 'day' ? themeImages.selected.day : themeImages.normal.day}/>
+                    </TouchableRipple>
+                    <TouchableRipple onPress={() => toggleNightMode('night')}
+                                     mode="contained" title="lang" style={style.themeRipple}>
+                        <Image source={nightMode === 'night' ? themeImages.selected.night : themeImages.normal.night}/>
+                    </TouchableRipple>
+                    <TouchableRipple onPress={() => toggleNightMode('device')}
+                                     mode="contained" title="lang" style={style.themeRipple}>
+                        <Image
+                            source={nightMode === 'device' ? themeImages.selected.device : themeImages.normal.device}/>
+                    </TouchableRipple>
+                </View>
             </View>
-        </View>,
-        <View style={style.langView}>
-            <Text style={style.languageButtonsStyle.textStyle}>{translations.language}</Text>
-            <View style={style.languageButtonsStyle}>
-                {getLanguageImages()}
-                <Text style={style.languageButtonsStyle.textStyle}>{getLanguageText()}</Text>
+            <View style={style.langView}>
+                <View style={style.langView.textView}>
+                    <Text style={style.languageButtonsStyle.textStyle}>{translations.language}</Text>
+                    <Text style={style.languageButtonsStyle.textStyle}>{getLanguageText()}</Text>
+                </View>
+                <View style={style.languageButtonsStyle}>
+                    {getLanguageImages()}
+                </View>
             </View>
-        </View>,
-        <View style={style.unitView}>
-            <Text style={style.unitButtonsStyle.textStyle}>{translations.measurementUnits}</Text>
-            <View style={style.unitButtonsStyle}>
-                <TouchableRipple onPress={() => saveUnits('metric')}
-                                 mode="contained" title="lang">
-                    <Image source={units === 'metric' ? unitImages.selected.metric : unitImages.normal.imperial}/>
-                </TouchableRipple>
-                <TouchableRipple onPress={() => saveUnits('imperial')}
-                                 mode="contained" title="lang">
-                    <Image source={units === 'imperial' ? unitImages.selected.metric : unitImages.normal.imperial}/>
-                </TouchableRipple>
-                <Text style={style.unitButtonsStyle.textStyle}>{getUnitsText()}</Text>
+            <View style={style.unitView}>
+                <View style={style.unitView.textView}>
+                    <Text style={style.unitButtonsStyle.textStyle}>{translations.measurementUnits}</Text>
+                    <Text style={style.unitButtonsStyle.textStyle}>{getUnitsText()}</Text>
+                </View>
+                <View style={style.unitButtonsStyle}>
+                    <TouchableRipple onPress={() => saveUnits('metric')}
+                                     mode="contained" title="lang" style={style.unitRipple}>
+                        <Image source={units === 'metric' ? unitImages.selected.metric : unitImages.normal.metric}/>
+                    </TouchableRipple>
+                    <TouchableRipple onPress={() => saveUnits('imperial')}
+                                     mode="contained" title="lang" style={style.unitRipple}>
+                        <Image source={units === 'imperial' ? unitImages.selected.imperial : unitImages.normal.imperial}/>
+                    </TouchableRipple>
+                </View>
             </View>
-        </View>,
-        <View style={style.accountView}>
-            {getAccountView()}
         </View>
-    ]
+    }
+
+    return <View>
+        <ReturnButton/>
+        <View>{getSettings()}</View>
+        <View style={style.accountView}>
+            <View style={style.accountView.textView}>
+                <Text style={style.accountView.textStyle}>{getAccountSettingsTitle()}</Text>
+            </View>
+            <View style={style.accountView.buttonView}>
+                {getAccountView()}
+            </View>
+        </View>
+    </View>
 };
 
 const style = {
-    langView: {
+    themeView: {
+        borderWidth: 1,
+        borderRadius: 15,
+        marginTop: '2%',
+        marginBottom: '2%',
         flexDirection: 'column',
-        width: '100%'
+        width: '100%',
+        textView: {
+            justifyContent: 'center',
+            flexDirection: 'row',
+        }
     },
-    languageButtonsStyle: {
+    themeButtonsStyle: {
+        justifyContent: 'center',
         flexDirection: 'row',
         textStyle: {
-            fontSize: 32
+            color: 'black',
+            fontSize: 24,
+            textAlignVertical: 'center'
+        }
+    },
+    langView: {
+        borderWidth: 1,
+        borderRadius: 15,
+        flexDirection: 'column',
+        width: '100%',
+        marginBottom: '2%',
+        textView: {
+            justifyContent: 'center',
+            flexDirection: 'row',
+        }
+    },
+    languageButtonsStyle: {
+        justifyContent: 'center',
+        flexDirection: 'row',
+        textStyle: {
+            color: 'black',
+            fontSize: 24,
+            textAlignVertical: 'center'
         }
     },
     unitView: {
+        borderWidth: 1,
+        borderRadius: 15,
+        marginBottom: '2%',
         flexDirection: 'column',
-        width: '100%'
+        width: '100%',
+        textView: {
+            justifyContent: 'center',
+            flexDirection: 'row',
+        }
     },
     unitButtonsStyle: {
+        justifyContent: 'center',
         flexDirection: 'row',
         textStyle: {
-            fontSize: 32,
+            color: 'black',
+            fontSize: 24,
+            textAlignVertical: 'center'
         }
     },
     accountButtonsStyle: {},
-    accountView: {},
-    loginButtonStyle: {
+    accountView: {
+        textView: {
+            marginBottom: '2%',
+            alignItems: 'center',
+        },
+        textStyle: {
+            color: 'black',
+            fontSize: 22,
+            textAlignVertical: 'center'
+        },
+        buttonView: {
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: '90%'
+        },
+        borderWidth: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderRadius: 15,
+        marginTop: '3%',
+        padding: '2%',
+    },
+    mainAccButtonView: {
+        button: {
+            borderRadius: 100,
+            alignItems: 'center',
+            justifyContent: 'center',
+            marginLeft: '2%',
+            marginRight: '2%'
+        },
+        buttonContent: {
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: 50,
+            width: 50,
+            height: 50
+        },
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginTop: '1%',
         flexDirection: 'row',
         width: '100%'
     },
+    signUp: {
+        button: {
+            marginTop: '3%',
+            borderRadius: 50,
+            height: '15%',
+        },
+        mainView: {
+            width: '100%',
+        },
+        textInputs: {
+            marginTop: '3%',
+            marginBottom: '3%',
+            borderRadius: 50,
+            overflow: 'hidden',
+        },
+    },
+    forgot: {
+        button: {
+            marginTop: '3%',
+            borderRadius: 50,
+            height: '25%',
+        },
+        mainView: {
+            width: '100%',
+        },
+        textInputs: {
+            marginTop: '3%',
+            marginBottom: '3%',
+            borderRadius: 50,
+            overflow: 'hidden',
+        },
+    },
+    signIn: {
+        button: {
+            marginTop: '3%',
+            borderRadius: 50,
+            height: '15%',
+        },
+        mainView: {
+            width: '100%',
+        },
+        textInputs: {
+            marginTop: '3%',
+            marginBottom: '3%',
+            borderRadius: 50,
+            overflow: 'hidden',
+        },
+    },
+    signOut: {
+        borderRadius: 50
+    },
+    unitRipple: {
+        borderWidth: 2,
+        borderRadius: 100,
+        borderColor: 'black',
+        backgroundColor: '#dadada',
+        width: 50,
+        height: 50,
+        margin: '3%',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    langRipple: {
+        borderWidth: 2,
+        borderRadius: 100,
+        borderColor: 'black',
+        backgroundColor: '#dadada',
+        width: 50,
+        height: 50,
+        margin: '3%',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    themeRipple: {
+        borderWidth: 2,
+        borderRadius: 100,
+        borderColor: 'black',
+        backgroundColor: '#dadada',
+        width: 50,
+        height: 50,
+        margin: '3%',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    imgStyle: {
+        width: 50,
+        height: 50,
+        borderRadius: 25,
+    }
 }

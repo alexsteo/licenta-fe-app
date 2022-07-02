@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {useState} from 'react';
-import {Button, List, Text, TouchableRipple} from 'react-native-paper';
+import {Button, Text, TouchableRipple} from 'react-native-paper';
 import {useDispatch, useSelector} from "react-redux";
 import {submitReport} from "../common/apiMethods";
 import {getLanguageTranslations} from "../common/languages/languageSelector";
@@ -40,7 +40,7 @@ export const ReportModal = () => {
     const getButtonIfEnabled = () => {
         if (type === 'SNOW' || type === 'HEAVY_RAIN' || type === 'FOG' || type === 'TRAFFIC' || type === 'ROAD_ACCIDENT') {
             return (
-                <Button icon="camera" mode="contained" onPress={() => reportProblem(type)} key={5}>
+                <Button icon="camera" mode="contained" onPress={() => reportProblem(type)} key={5} style={style.buttonStyle} color={'black'}>
                     {getButtonText()}
                 </Button>
             )
@@ -67,41 +67,44 @@ export const ReportModal = () => {
 
     const getScreen = () => {
         if (!!userEmail && userEmail !== '') {
-            return ([
-                    <ReturnButton/>,
-                    <List.Item
-                        key={2}
-                        title={translations.reportModalTitle}
-                    />,
-                    <View style={style.buttonsViewStyle}>
-                        <TouchableRipple onPress={() => setType('FOG')} mode="contained" title="lang">
+            return <View>
+                <ReturnButton/>
+                <Text style={style.titleStyle} key={2}>{translations.reportModalTitle}</Text>
+                <View style={style.buttonsViewStyle}>
+                    <View style={style.firstView}>
+                        <TouchableRipple onPress={() => setType('FOG')} mode="contained" title="lang" style={style.ripple}>
                             <Image source={type === 'FOG' ? reportImages.selected.fog : reportImages.normal.fog}/>
                         </TouchableRipple>
-                        <TouchableRipple onPress={() => setType('HEAVY_RAIN')} mode="contained" title="lang">
-                            <Image source={type === 'HEAVY_RAIN' ? reportImages.selected.rain : reportImages.normal.rain}/>
+                        <TouchableRipple onPress={() => setType('HEAVY_RAIN')} mode="contained" title="lang" style={style.ripple}>
+                            <Image
+                                source={type === 'HEAVY_RAIN' ? reportImages.selected.rain : reportImages.normal.rain}/>
                         </TouchableRipple>
-                        <TouchableRipple onPress={() => setType('SNOW')} mode="contained" title="lang">
+                        <TouchableRipple onPress={() => setType('SNOW')} mode="contained" title="lang" style={style.ripple}>
                             <Image source={type === 'SNOW' ? reportImages.selected.snow : reportImages.normal.snow}/>
                         </TouchableRipple>
-                        <TouchableRipple onPress={() => setType('TRAFFIC')} mode="contained" title="lang">
-                            <Image source={type === 'TRAFFIC' ? reportImages.selected.traffic : reportImages.normal.traffic}/>
-                        </TouchableRipple>
-                        <TouchableRipple onPress={() => setType('ROAD_ACCIDENT')} mode="contained" title="lang">
-                            <Image source={type === 'ROAD_ACCIDENT' ? reportImages.selected.accident : reportImages.normal.accident}/>
-                        </TouchableRipple>
-                    </View>,
-                    <View>
-                        {getButtonIfEnabled()}
                     </View>
-                ]
-            );
+                    <View style={style.secondView}>
+                        <TouchableRipple onPress={() => setType('TRAFFIC')} mode="contained" title="lang" style={style.ripple}>
+                            <Image style={style.imgStyle}
+                                source={type === 'TRAFFIC' ? reportImages.selected.traffic : reportImages.normal.traffic}/>
+                        </TouchableRipple>
+                        <TouchableRipple onPress={() => setType('ROAD_ACCIDENT')} mode="contained" title="lang" style={style.ripple}>
+                            <Image
+                                source={type === 'ROAD_ACCIDENT' ? reportImages.selected.accident : reportImages.normal.accident}/>
+                        </TouchableRipple>
+                    </View>
+                </View>
+                <View>
+                    {getButtonIfEnabled()}
+                </View>
+            </View>
+                ;
 
         } else {
-            return ([
-                    <ReturnButton/>,
-                    <Text>{translations.noUserReport}</Text>
-                ]
-            )
+            return <View>
+                <ReturnButton/>
+                <Text>{translations.noUserReport}</Text>
+            </View>
         }
     }
 
@@ -109,7 +112,42 @@ export const ReportModal = () => {
 };
 
 const style = {
+    buttonStyle: {
+
+    },
+    imgStyle: {
+
+    },
+    firstView: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        marginTop: '5%',
+        marginBottom: '5%',
+    },
+    secondView: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        marginTop: '5%',
+        marginBottom: '10%',
+    },
+    ripple: {
+        borderWidth: 2,
+        borderRadius: 100,
+        borderColor: 'black',
+        backgroundColor: '#dadada',
+        width: 90,
+        height: 90,
+        margin: '3%',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
     buttonsViewStyle: {
-        flexDirection: 'row'
+    },
+    titleStyle: {
+        marginTop: '5%',
+        marginBottom: '5%',
+        textAlign: 'center',
+        fontSize: 22,
+        color: 'black',
     }
 }

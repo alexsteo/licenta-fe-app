@@ -7,7 +7,7 @@ import {
     HIDE_WEATHER_INFO_SCREEN,
     LOGIN,
     LOGOUT,
-    RESOLVE_ROUTE_CALL,
+    RESOLVE_ROUTE_CALL, SET_ALL_REPORTS,
     SET_CURRENT_WEATHER,
     SET_FAVOUIRITES,
     SET_LANGUAGE,
@@ -77,6 +77,13 @@ export const setReports = (reports) => {
         payload: reports
     };
 };
+
+export const setAllReports = (reports) => {
+    return {
+        type: SET_ALL_REPORTS,
+        payload: reports
+    }
+}
 
 export const setModalScreen = (screen) => {
     return {

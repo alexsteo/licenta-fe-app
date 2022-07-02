@@ -1,11 +1,19 @@
 import React, {useEffect} from 'react';
 import MapView, {Marker, Polyline, PROVIDER_GOOGLE} from "react-native-maps";
-import {Dimensions, StyleSheet, View} from "react-native";
+import {Dimensions, Image, StyleSheet, View} from "react-native";
 import {useDispatch, useSelector} from "react-redux";
 import {setMapViewWithCoords, setWeatherInfoScreenType, showWeatherInfoScreen} from "../../store/actions/actions";
 import {MapStyles} from "../common/mapStyles";
 import GetLocation from "react-native-get-location";
 import {isNightMode} from "../common/nightModeSlector";
+
+const markerImages = {
+    badWeather: require('../../res/bad_weather_marker.png'),
+    mediumWeather: require('../../res/medium_weather_marker.png'),
+    goodWeather: require('../../res/good_weather_marker.png'),
+    report: require('../../res/report_marker.png'),
+    favorite: require('../../res/favourite_marker.png')
+}
 
 export const Map = ({navToLocFunc, rotateToNorthFunc}) => {
 
@@ -14,6 +22,7 @@ export const Map = ({navToLocFunc, rotateToNorthFunc}) => {
     const currentWeather = useSelector(state => state.nav.currentWeather);
     const searchType = useSelector(state => state.screen.searchType);
     const reports = useSelector(state => state.nav.reports);
+    const allReports = useSelector(state => state.nav.allReports);
     const favourites = useSelector(state => state.nav.favourites);
     const mapView = useSelector(state => state.screen.mapView);
     const routePlusHours = useSelector(state => state.screen.routePlusHours);
@@ -50,15 +59,14 @@ export const Map = ({navToLocFunc, rotateToNorthFunc}) => {
         }
     }
 
-    const calculatePinColor = (weather) => {
-        let color = 'green';
-        if (weather.temperature < 5 || weather.rain > 0 || weather.snow > 0 || weather.clouds > 80) {
-            color = 'yellow';
-        }
+    const calculatePinImage = (weather) => {
         if (weather.temperature < 0.5 || weather.rain > 0.5 || weather.snow > 0.5) {
-            color = 'red';
+            return markerImages.badWeather;
         }
-        return color;
+        if (weather.temperature < 5 || weather.rain > 0 || weather.snow > 0 || weather.clouds > 80) {
+            return markerImages.mediumWeather;
+        }
+        return markerImages.goodWeather
     }
 
     const openWeatherScreen = (data, screenType) => {
@@ -100,8 +108,12 @@ export const Map = ({navToLocFunc, rotateToNorthFunc}) => {
                             latitude: !!weather.lat ? parseFloat(weather.lat) : 0,
                             longitude: !!weather.lng ? parseFloat(weather.lng) : 0
                         }}
-                        pinColor={calculatePinColor(weather).toString()}
                         onPress={() => openWeatherScreen(weather, 'checkpoint')}>
+                    <Image
+                        source={calculatePinImage(weather)}
+                        style={{width: 50, height: 50}}
+                        resizeMode="contain"
+                    />
                 </Marker>
             );
     }
@@ -112,13 +124,38 @@ export const Map = ({navToLocFunc, rotateToNorthFunc}) => {
                 latitude: !!currentWeather.lat ? parseFloat(currentWeather.lat) : 0,
                 longitude: !!currentWeather.lng ? parseFloat(currentWeather.lng) : 0
             }}
-                    pinColor={'green'}
                     onPress={() => openWeatherScreen(currentWeather, 'weather')}>
+                <Image
+                    source={calculatePinImage(calculatePinImage(currentWeather))}
+                    style={{width: 50, height: 50}}
+                    resizeMode="contain"
+                />
             </Marker>
         ) : null;
     }
 
-    const addReports = (reports) => {
+    const addReportsOnReportScreen = (reports) => {
+        return searchType === 'reports' ? (
+                reports.map(report => (
+                        <Marker key={Math.random()}
+                                coordinate={{
+                                    latitude: parseFloat(report.lat),
+                                    longitude: parseFloat(report.lng)
+                                }}
+                                onPress={() => openWeatherScreen(report, 'report')}>
+                            <Image
+                                source={markerImages.report}
+                                style={{width: 50, height: 50}}
+                                resizeMode="contain"
+                            />
+                        </Marker>
+                    )
+                )
+            ) :
+            null;
+    }
+
+    const addReportsForRoutes = (reports) => {
         return searchType === 'navigation' ? (
                 reports.map(report => (
                         <Marker key={Math.random()}
@@ -126,8 +163,12 @@ export const Map = ({navToLocFunc, rotateToNorthFunc}) => {
                                     latitude: parseFloat(report.lat),
                                     longitude: parseFloat(report.lng)
                                 }}
-                                pinColor={'blue'}
                                 onPress={() => openWeatherScreen(report, 'report')}>
+                            <Image
+                                source={markerImages.report}
+                                style={{width: 50, height: 50}}
+                                resizeMode="contain"
+                            />
                         </Marker>
                     )
                 )
@@ -143,8 +184,12 @@ export const Map = ({navToLocFunc, rotateToNorthFunc}) => {
                                     latitude: parseFloat(fav.lat),
                                     longitude: parseFloat(fav.lng)
                                 }}
-                                pinColor={'yellow'}
                                 onPress={() => openWeatherScreen(fav, 'favourites')}>
+                            <Image
+                                source={markerImages.favorite}
+                                style={{width: 50, height: 50}}
+                                resizeMode="contain"
+                            />
                         </Marker>
                     )
                 )
@@ -185,10 +230,11 @@ export const Map = ({navToLocFunc, rotateToNorthFunc}) => {
             provider={PROVIDER_GOOGLE}
             style={backgroundStyle.map}
             initialRegion={mapView}
-            customMapStyle={isNightMode(nightMode) ? MapStyles.lightMode : MapStyles.nightMode}>
+            customMapStyle={(console.log(isNightMode(nightMode)) || console.log(nightMode) || isNightMode(nightMode)) ? MapStyles.nightMode : MapStyles.lightMode}>
             {addRoutes(routes)}
             {addWeatherData(currentWeather)}
-            {addReports(reports)}
+            {addReportsForRoutes(reports)}
+            {addReportsOnReportScreen(allReports)}
             {addFavourites(favourites)}
             {addWeatherOnRoutes(weatherOnRoutes, routePlusHours)}
         </MapView>

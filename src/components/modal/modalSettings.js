@@ -6,12 +6,12 @@ import {MainModal} from "./mainModal";
 import {ReportModal} from "./reportModal";
 import {FavouriteModal} from "./favouriteModal";
 import {SettingsModal} from "./settingsModal";
-import {Appearance, ScrollView, View} from "react-native";
+import {Appearance, View} from "react-native";
 import {getLanguageTranslations} from "../common/languages/languageSelector";
 
 const style = {
     containerStyle: {
-        backgroundColor: Appearance.getColorScheme() === 'dark' ? '#121212' : 'white',
+        backgroundColor: 'white',
         padding: 20,
         paddingTop: 0,
         borderRadius: 20,
@@ -27,6 +27,9 @@ const style = {
     modalViewStyle: {
         height: '100%',
     },
+    scrol: {
+        borderWidth: 2
+    }
 }
 
 const ModalSettings = () => {
@@ -65,9 +68,7 @@ const ModalSettings = () => {
                     contentContainerStyle={style.containerStyle}
                 >
                     <View style={style.modalViewStyle}>
-                        <ScrollView>
-                            {chooseModalScreen(screen)}
-                        </ScrollView>
+                        {chooseModalScreen(screen)}
                     </View>
                 </Modal>
             </Portal>

@@ -6,6 +6,7 @@ export const SHOW_MODAL = "SHOW_MODAL";
 export const HIDE_MODAL = "HIDE_MODAL";
 export const ADD_REPORT = "ADD_REPORT";
 export const SET_REPORTS = "SET_REPORTS";
+export const SET_ALL_REPORTS = "SET_ALL_REPORTS";
 export const SET_MODAL_SCREEN = "SET_MODAL_SCREEN";
 export const SET_FAVOUIRITES = "SET_FAVOUIRITES";
 export const ADD_TO_FAVOURITES = "ADD_TO_FAVOURITES";

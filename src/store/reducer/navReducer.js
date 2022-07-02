@@ -3,7 +3,7 @@ import {
     ADD_REPORT,
     ADD_TO_FAVOURITES,
     DELETE_FROM_FAVOURITE,
-    RESOLVE_ROUTE_CALL,
+    RESOLVE_ROUTE_CALL, SET_ALL_REPORTS,
     SET_CURRENT_WEATHER,
     SET_FAVOUIRITES,
     SET_REPORTS,
@@ -19,6 +19,7 @@ const INITIAL_STATE = {
     reports: [],
     searchedFor: "",
     favourites: [],
+    allReports: []
 };
 
 const eliminateFavourite = (payload, state) => {
@@ -46,6 +47,11 @@ const navReducer = (state = INITIAL_STATE, action) => {
             return {
                 ...state,
                 reports: action.payload
+            }
+        case SET_ALL_REPORTS:
+            return {
+                ...state,
+                allReports: action.payload.reports
             }
         case SET_FAVOUIRITES:
             return {

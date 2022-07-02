@@ -1,9 +1,9 @@
 import GetLocation from "react-native-get-location";
 import {
-    addReport, addToFavourites, deleteFromFavourites, hideModal, hideWeatherInfoScreen, resolveRouteCall,
+    addReport, addToFavourites, deleteFromFavourites, hideModal, hideWeatherInfoScreen, resolveRouteCall, setAllReports,
     setCurrentWeather,
     setDirections,
-    setFavourites, setMapView, setModalScreen,
+    setFavourites, setMapView, setMapViewWithCoords, setModalScreen,
     setReports,
     setSearchedFor
 } from "../../store/actions/actions";
@@ -34,6 +34,13 @@ export const searchWeatherAtLocation = (searchTerm, dispatch) => {
     fetch(url)
         .then(res => res.json())
         .then(data => {
+            const region = {
+                latitude: parseFloat(data.lat),
+                longitude: parseFloat(data.lng),
+                latitudeDelta: 3,
+                longitudeDelta: 3,
+            }
+            dispatch(setMapViewWithCoords(region))
             dispatch(setCurrentWeather(data));
             dispatch(setSearchedFor(searchTerm));
         });
@@ -95,9 +102,11 @@ export const addFavourite = (location, dispatch, user) => {
         },
         body: JSON.stringify(data),
     };
+    console.log(url, options)
     fetch(url, options)
         .then(res => res.json())
         .then(data => {
+            console.log(data)
             dispatch(addToFavourites(data));
             dispatch(setModalScreen("main"));
             dispatch(hideModal());
@@ -114,5 +123,27 @@ export const deleteFavourite = (city, dispatch, user) => {
         .then(data => {
             dispatch(hideWeatherInfoScreen())
             dispatch(deleteFromFavourites({city: city, success: data}))
+        });
+}
+
+export const getAllReports = (dispatch) => {
+    let url = `https://licenta-backend-teo.herokuapp.com/report/merged`;
+    const data = {
+        minLat:-180,
+        minLng:-180,
+        maxLat:180,
+        maxLng:180
+    }
+    const options = {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data),
+    };
+    fetch(url, options)
+        .then(res => res.json())
+        .then(data => {
+            dispatch(setAllReports(data));
         });
 }

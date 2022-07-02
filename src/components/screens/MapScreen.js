@@ -9,9 +9,11 @@ import ModalSettings from "../modal/modalSettings";
 import WeatherInfoScreen from "../weatherInfo/weatherInfoScreen";
 import {Avatar, Text, TouchableRipple} from "react-native-paper";
 import {SliderComponent} from "../map/slider";
+import {FavouriteSearch} from "../inputs/favouriteSearch";
 
 export const MapScreen = () => {
 
+    const routes = useSelector(state => state.nav.routes);
     const searchType = useSelector(state => state.screen.searchType);
     const showWeatherInfoScreen = useSelector(state => state.screen.showWeatherInfoScreen);
     const weatherInfoScreenData = useSelector(state => state.screen.weatherInfoScreenData);
@@ -29,14 +31,24 @@ export const MapScreen = () => {
             case "weather":
                 return <WeatherSearch style={style.searchBar}/>
             case "favourites":
-                return <WeatherSearch style={style.searchBar}/>
+                return <FavouriteSearch style={style.searchBar}/>
+            case "reports":
+                return <FavouriteSearch style={style.searchBar}/>
             default:
                 return
         }
     }
 
     const getSliderIfNeeded = () => {
-        return (searchType === "navigation" || searchType === "weather") && <SliderComponent/>
+        return (searchType === "navigation") && !!routes && routes.length > 0 && <SliderComponent/>
+    }
+
+    const getPlusHoursView = () => {
+        return searchType === 'navigation' && !!routes && routes.length > 0 && (
+            <View style={style.plusHoursViewStyle}>
+                <Text style={style.plusHoursTextStyle}>{getPlusHoursText()}</Text>
+            </View>
+        )
     }
 
     const getPlusHoursText = () => {
@@ -54,9 +66,7 @@ export const MapScreen = () => {
                     {getSliderIfNeeded()}
                 </View>
                 {getSearchType(searchType)}
-                <View style={style.plusHoursViewStyle}>
-                    <Text style={style.plusHoursTextStyle}>{getPlusHoursText()}</Text>
-                </View>
+                {getPlusHoursView()}
                 <View style={style.buttonViewStyle}>
                     <TouchableRipple style={style.buttonStyle} onPress={() => navToLocFunc.current()}
                                      mode="contained" title="lang">
@@ -69,14 +79,10 @@ export const MapScreen = () => {
                                       source={require('../../res/north.png')}/>
                     </TouchableRipple>
                 </View>
-                <View
-                    style={style.navigatorStyle}
-                >
+                <View style={style.navigatorStyle}>
                     <Navigator/>
                 </View>
-                <ModalSettings
-                    style={style.modalStyle}
-                />
+                <ModalSettings style={style.modalStyle}/>
                 <WeatherInfoScreen/>
             </View>
         </View>
@@ -93,11 +99,11 @@ const style = {
         width: Dimensions.get('window').width,
     },
     navigatorStyle: {
-        marginTop: 100
+        marginTop: 100,
     },
     sliderStyle: {
         position: 'absolute',
-        top: Dimensions.get('window').height - 170,
+        top: Dimensions.get('window').height - 200,
         left: Dimensions.get('window').width * 0.1,
         width: Dimensions.get('window').width * 0.8,
     },
@@ -107,7 +113,7 @@ const style = {
     },
     buttonViewStyle: {
         position: 'absolute',
-        top: Dimensions.get('window').height - 275,
+        top: Dimensions.get('window').height - 310,
         left: Dimensions.get('window').width * 0.87,
     },
     plusHoursViewStyle: {
