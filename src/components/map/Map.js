@@ -177,8 +177,8 @@ export const Map = ({navToLocFunc, rotateToNorthFunc}) => {
     }
 
     const addFavourites = (favourites) => {
-        return searchType === 'favourites' ? (
-                favourites.map(fav => (
+        return !!favourites && favourites !== [] && searchType === 'favourites' ? (
+                 favourites.map(fav => (
                         <Marker key={Math.random()}
                                 coordinate={{
                                     latitude: parseFloat(fav.lat),

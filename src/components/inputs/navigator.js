@@ -5,6 +5,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {setSearchType} from "../../store/actions/actions";
 import {getLanguageTranslations} from "../common/languages/languageSelector";
 import {Snackbar} from "react-native-paper";
+import {getAllReports, getFavouritesForUser} from "../common/apiMethods";
 
 export const Navigator = (props) => {
 
@@ -23,6 +24,12 @@ export const Navigator = (props) => {
     const onMenuItemPress = (key) => {
         if(key === 'favourites' && !user) {
             setSnackBar(true);
+        }
+        if(key === 'favourites' && !!user) {
+            getFavouritesForUser(dispatch, user);
+        }
+        if(key === 'reports') {
+            getAllReports(dispatch);
         }
         setScreen(key);
         dispatch(setSearchType(key));
@@ -67,7 +74,9 @@ export const Navigator = (props) => {
                     text={translations.navigatorFavourites}
                     type="Feather"
                     isActive={screen === "favourites"}
-                    onPress={() => onMenuItemPress("favourites")}
+                    onPress={() => {
+                        onMenuItemPress("favourites")
+                    }}
                 />
                 <Item
                     size={30}

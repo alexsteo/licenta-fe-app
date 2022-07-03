@@ -47,8 +47,12 @@ const WeatherInfoScreen = () => {
             <View style={style.modalViewStyle}>
                 <View style={style.textView}>
                     {translations.weatherInfoRoute.split('\n').map(text => {
-                        if (text.lastIndexOf("long") >= 0 && units === 'imperial') {
-                            text = text.replace('km', 'miles');
+                        if ((text.lastIndexOf("Route") >= 0 || text.lastIndexOf('Ruta') >= 0) && units === 'imperial') {
+                            if(language === 'en') {
+                                text = text.replace('km', 'miles');
+                            } else if (language === 'ro'){
+                                text = text.replace('km', 'mile');
+                            }
                             return <Text style={style.textStyleRoute}>{format(text, toDisplay[idx++])}</Text>
                         }
                         return <Text style={style.textStyleRoute}>{format(text, toDisplay[idx++])}</Text>
@@ -59,13 +63,14 @@ const WeatherInfoScreen = () => {
     }
 
     const favouriteData = () => {
+        console.log(data)
         const toDisplay = [data.city?.toUpperCase(), data.temperature, data.rain, data.snow, data.clouds];
         let idx = 0;
         return (
             <View style={style.modalViewStyleWithButton}>
                 <View style={style.textViewWithButton}>
                     {translations.weatherInfoForecast.split('\n').map(text => {
-                        if (text.lastIndexOf("Temperature") >= 0 && units === 'imperial') {
+                        if ((text.lastIndexOf("Temperature") >= 0 || text.lastIndexOf("Temperatura") >= 0) >= 0 && units === 'imperial') {
                             text = text.replace('C', 'F');
                             return <Text
                                 style={style.textStyleWithButton}>{format(text, getMeasurementValue(toDisplay[idx++], units, 'temperature'))}</Text>
@@ -85,16 +90,14 @@ const WeatherInfoScreen = () => {
     }
 
     const routeWeatherData = () => {
-        const toDisplay = [data.location?.toUpperCase(), data.temperature, data.rain, data.snow, data.clouds];
+        const toDisplay = [data.location?.toUpperCase(), getMeasurementValue(data.temperature, units, 'temperature'), data.rain, data.snow, data.clouds];
         let idx = 0;
         return (
             <View style={style.modalViewStyle}>
                 <View style={style.textView}>
                     {translations.weatherInfoForecast.split('\n').map(text => {
-                        if (text.lastIndexOf("Temperature") >= 0 && units === 'imperial') {
+                        if ((text.lastIndexOf("Temperature") >= 0 || text.lastIndexOf("Temperatura") >= 0) && units === 'imperial') {
                             text = text.replace('C', 'F');
-                            return <Text
-                                style={style.textStyle}>{format(text, getMeasurementValue(toDisplay[idx++], units, 'temperature'))}</Text>
                         }
                         return <Text style={style.textStyle}>{format(text, toDisplay[idx++])}</Text>
                     })}
@@ -110,7 +113,7 @@ const WeatherInfoScreen = () => {
             <View style={style.modalViewStyle}>
                 <View style={style.textView}>
                     {translations.weatherInfoForecast.split('\n').map(text => {
-                        if (text.lastIndexOf("Temperature") >= 0 && units === 'imperial') {
+                        if ((text.lastIndexOf("Temperature") >= 0 || text.lastIndexOf("Temperatura") >= 0) >= 0 && units === 'imperial') {
                             text = text.replace('C', 'F');
                             return <Text
                                 style={style.textStyle}>{format(text, getMeasurementValue(toDisplay[idx++], units, 'temperature'))}</Text>
