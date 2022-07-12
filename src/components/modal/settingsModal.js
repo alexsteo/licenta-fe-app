@@ -290,7 +290,7 @@ export const SettingsModal = () => {
 
     async function onGoogleButtonPress() {
         try {
-            await GoogleSignin.hasPlayServices({showPlayServicesUpdateDialog: true}); // <-- Add this
+            await GoogleSignin.hasPlayServices({showPlayServicesUpdateDialog: true});
             const {idToken} = await GoogleSignin.signIn();
             const googleCredential = auth.GoogleAuthProvider.credential(idToken);
             await auth().signInWithCredential(googleCredential);

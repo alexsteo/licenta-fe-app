@@ -126,7 +126,7 @@ export const Map = ({navToLocFunc, rotateToNorthFunc}) => {
             }}
                     onPress={() => openWeatherScreen(currentWeather, 'weather')}>
                 <Image
-                    source={calculatePinImage(calculatePinImage(currentWeather))}
+                    source={calculatePinImage(currentWeather)}
                     style={{width: 50, height: 50}}
                     resizeMode="contain"
                 />

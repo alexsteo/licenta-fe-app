@@ -14,7 +14,15 @@ export const getDirections = (searchTerm, dispatch, setSnackbar) => {
         timeout: 15000,
     })
         .then(loc => {
-            let url = `https://licenta-backend-teo.herokuapp.com/route/${loc.latitude + "," + loc.longitude}/${searchTerm.lat + "," + searchTerm.lng}`
+            console.log(searchTerm)
+            // url = `https://licenta-backend-teo.herokuapp.com/route/${loc.latitude + "," + loc.longitude}/${searchTerm.name}`
+            let url;
+            if(searchTerm.name === 'iasi') {
+                url = `https://licenta-backend-teo.herokuapp.com/route/${loc.latitude + "," + loc.longitude}/${searchTerm.name}`
+            } else {
+                url = `https://licenta-backend-teo.herokuapp.com/route/${loc.latitude + "," + loc.longitude}/${searchTerm.lat + "," + searchTerm.lng}`
+            }
+            console.log(url)
             fetch(url)
                 .then(res => res.json())
                 .then(data => {

@@ -107,7 +107,7 @@ const WeatherInfoScreen = () => {
     }
 
     const weatherData = () => {
-        const toDisplay = [data.city?.toUpperCase(), data.temperature, data.rain, data.snow, data.clouds];
+        const toDisplay = [data.name?.toUpperCase(), data.temperature, data.rain, data.snow, data.clouds];
         let idx = 0;
         return (
             <View style={style.modalViewStyle}>
@@ -206,7 +206,7 @@ const style = {
     textStyle: {
         marginTop: '2%',
         marginBottom: '2%',
-        fontSize: 22,
+        fontSize: 18,
         color: 'black',
     },
     textStyleReport: {
@@ -223,6 +223,7 @@ const style = {
         borderRadius: 10,
         marginBottom: '5%',
         marginTop: '10%',
+        fontSize: 18
     },
     ripple: {
         borderWidth: 1,
